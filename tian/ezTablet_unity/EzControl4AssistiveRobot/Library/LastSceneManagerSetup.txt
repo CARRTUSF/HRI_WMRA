@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Tian/Scenes/main.unity
+  isLoaded: 1
+  isActive: 1

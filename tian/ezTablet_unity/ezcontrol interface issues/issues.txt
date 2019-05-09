@@ -1,0 +1,4 @@
+1.grippers show up incorrectly in the interface
+	camera distortion?
+2.slider value won't reset in reactivation
+	add third gripper as the adjustable gripper
