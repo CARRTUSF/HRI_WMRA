@@ -15,10 +15,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vgt2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1360">
-              <caret line="119" column="44" selection-start-line="119" selection-start-column="44" selection-end-line="119" selection-end-column="44" />
+            <state relative-caret-position="-1814">
+              <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#10016#13987#0" />
+                <element signature="e#14007#14180#0" />
               </folding>
             </state>
           </provider>
@@ -38,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4981">
-              <caret line="300" column="30" selection-start-line="300" selection-start-column="30" selection-end-line="300" selection-end-column="30" />
+            <state relative-caret-position="748">
+              <caret line="578" column="19" selection-start-line="578" selection-start-column="4" selection-end-line="578" selection-end-column="19" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -87,7 +89,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="width" value="1059" />
     <option name="height" value="1050" />
   </component>
@@ -192,15 +194,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1059" height="1050" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12144956" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.06533193" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32928178" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49966997" visible="true" weight="0.28026173" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49966997" weight="0.27545553" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39335477" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -208,7 +210,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3279743" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32475883" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50033003" side_tool="true" weight="0.27673796" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.23336968" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.23258306" />
       <window_info anchor="bottom" id="Educational.CheckDetails" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -216,31 +218,11 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vgt2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1360">
-          <caret line="119" column="44" selection-start-line="119" selection-start-column="44" selection-end-line="119" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4981">
-          <caret line="300" column="30" selection-start-line="300" selection-start-column="30" selection-end-line="300" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -251,6 +233,28 @@
           <caret line="66" column="41" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="578" column="19" selection-start-line="578" selection-start-column="4" selection-end-line="578" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vgt2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1814">
+          <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#10016#13987#0" />
+            <element signature="e#14007#14180#0" />
           </folding>
         </state>
       </provider>

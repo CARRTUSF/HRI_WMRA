@@ -113,8 +113,10 @@ def normal_end(outline_pixels, normals):
 
 def find_contact_region(outline_pixels, index_array, center, theta):
     grasp_path_corners = get_corners(center, theta, 19, 130)
-    r_max = int(round(np.amax(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
-    r_min = int(round(np.amin(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
+    r_1 = int(round(np.amax(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
+    r_2 = int(round(np.amin(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
+    r_max = min(r_1, index_array.shape[0])
+    r_min = max(0, r_2)
     contact_region = np.ndarray((0, 2), dtype=np.uint8)
 
     # --------------------------------------find contact seeds
@@ -166,7 +168,7 @@ def find_contact_region(outline_pixels, index_array, center, theta):
         if search_indicator[0]*search_indicator[1]*search_indicator[2]*search_indicator[3] == 1:
             break
 
-    return grasp_path_corners, contact_seeds, contact_region
+    return contact_region
 
 
 def inside_grasp_path(center, theta, pixel):
@@ -196,6 +198,106 @@ def test_index_array(array, r1):
             current_row = item[0]
     index_array.append([ix1, ix2])
     return index_array
+
+
+def total_loss(contact_region, outline_pixels, normals, gripper_center, theta):    # gripper_center(row,col)
+    """
+
+    :param contact_region: nx[row,col,side]
+    :param outline_pixels:
+    :param normals: nx[row0,col0,row1,col1]
+    :param gripper_center: [row,col]
+    :param theta: gripper roll
+    :return: x_loss, y_loss, theta_loss
+    """
+    normal_sum = np.array([0.0, 0.0])
+    vector_sum = np.array([0.0, 0.0])
+    left_sum = np.array([0.0, 0.0])
+    right_sum = np.array([0.0, 0.0])
+    gripper_center = np.array(gripper_center)
+    if contact_region.shape[0] > 70:
+        for contact_marker in contact_region:
+            contact = outline_pixels[contact_marker[0]]
+            vector_sum += contact - gripper_center       # [row, col]
+            normal_sum += normals[contact_marker[0]]
+            if contact_marker[1] == 0:
+                # left side
+                left_sum += normals[contact_marker[0]]        # [row, col]
+            else:
+                # right side
+                right_sum += normals[contact_marker[0]]       # [row, col]
+        x_loss = (vector_sum[0] ** 2 + vector_sum[1] ** 2)**0.5
+        y_loss = (normal_sum[0] ** 2 + normal_sum[1] ** 2)**0.5
+        r_normal = np.array([np.sin(np.deg2rad(theta)), np.cos(np.deg2rad(theta))])    # [row, col]
+        l_normal = np.array([-np.sin(np.deg2rad(theta)), -np.cos(np.deg2rad(theta))])   # [row, col]
+        if left_sum.all() == 0:
+            alpha = 30
+            beta = 30
+        elif right_sum.all() == 0:
+            beta = 30
+            alpha = 30
+        else:
+            c_alpha = np.dot(l_normal, left_sum) / (left_sum[0]**2+left_sum[1]**2)**0.5
+            c_beta = np.dot(r_normal, right_sum) / (right_sum[0]**2 + right_sum[1]**2)**0.5
+            alpha = np.rad2deg(np.arccos(c_alpha))
+            beta = np.rad2deg(np.arccos(c_beta))
+        theta_loss = (alpha + beta)**2
+        return x_loss, y_loss, theta_loss
+    else:
+        return -1, -1, -1
+
+
+def find_next_gripper_pose(outline_pixels, index_array, normals, current_pos):
+    r = 10
+    threshold = 0.1
+    min_loss = current_pos[3]
+    next_pos = current_pos
+    for i in range(50):
+        ri = r * np.sqrt(np.random.random())
+        phi = np.random.random() * 2 * np.pi
+        next_x = current_pos[0] + ri * np.cos(phi)
+        next_y = current_pos[1] + ri * np.sin(phi)
+        for k in range(30):
+            # s_time = time.time()
+            if k < 2:
+                next_theta = current_pos[2] * k
+            else:
+                d_theta = 90 * np.random.random() - 45
+                next_theta = current_pos[2] + d_theta
+            # start_time = time.time()
+            next_contact = find_contact_region(outline_pixels, index_array, [next_y, next_x], next_theta)
+            # print("get contact region used", time.time()-start_time, "seconds")
+            # start_time = time.time()
+            x_loss, y_loss, theta_loss = total_loss(next_contact, outline_pixels, normals, [next_y, next_x], next_theta)
+            loss = x_loss + y_loss + theta_loss
+            # print("find current loss used", time.time()-start_time, "seconds")
+            if loss != -3 and min_loss - loss > threshold:
+                min_loss = loss
+                next_pos = [next_x, next_y, next_theta, loss, x_loss, y_loss, theta_loss]
+            # print("one search used", time.time()-s_time, "seconds")
+    return next_pos
+
+
+def find_gripper_trajectory(outline_pixels, index_array, normals, current_pos):
+    iterations = 0
+    if current_pos[3] == -1:
+        current_contact = find_contact_region(outline_pixels, index_array, [current_pos[1], current_pos[0]], current_pos[2])
+        l1, l2, l3 = total_loss(current_contact, outline_pixels, normals, [current_pos[1], current_pos[0]], current_pos[2])
+        current_loss = l1 + l2 + l3
+        current_pos[3:7] = [current_loss, l1, l2, l3]
+    trajectory = [current_pos]
+    while iterations < 20:
+        start_time = time.time()
+        iterations += 1
+        next_pos = find_next_gripper_pose(outline_pixels, index_array, normals, current_pos)
+        if current_pos == next_pos:
+            break
+        else:
+            current_pos = next_pos
+            trajectory.append(current_pos)
+        print("iteration", iterations, "used", time.time() - start_time, "seconds")
+    trajectory = np.array(trajectory)
+    return trajectory
 
 
 def test1():
@@ -299,5 +401,24 @@ def test2():
     print(index_array)
 
 
+def main():
+    path = os.path.dirname(os.getcwd())
+    mask_image_name = 'tennis_mask.png'
+    image_name = 'spoon3.png'
+    mask_img = cv2.imread(os.path.join(path, 'pictures', mask_image_name))
+    print(mask_img.shape)
+    r_crop = 150
+    c_crop = 540
+    roi = mask_img[r_crop:570, c_crop:740, 0]
+    #outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(mask_img[:, :, 0], 0, 0, 7)
+    outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(roi, r_crop, c_crop, 7)
+    start_time3 = time.time()
+    trajectory = find_gripper_trajectory(outline_pixels_v3, index_array, outline_normals_v3, [659, 314, 0, -1, -1, -1, -1])
+    time3 = time.time() - start_time3
+    print('find trajectory used', time3, 'seconds')
+    print(trajectory)
+
+
 if __name__ == '__main__':
-    test1()
+    #test1()
+    main()
