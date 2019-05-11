@@ -4,13 +4,22 @@ import os
 from matplotlib import pyplot as plt
 
 
+def get_corners(center, theta, h, w):
+    theta = np.deg2rad(theta)
+    corner_vectors_original = np.array([[-h, h, -h, h], [-w, -w, w, w], [1, 1, 1, 1]])
+    transformation = np.array(
+        [[np.cos(theta), np.sin(theta), center[0]], [-np.sin(theta), np.cos(theta), center[1]], [0, 0, 1]])
+    new_corners = np.matmul(transformation, corner_vectors_original)
+    return new_corners
+
+
 def find_new_corner_vectors(corner_vectors, angle):
-    r = (130**2+18**2)**0.5
+    r = (130 ** 2 + 18 ** 2) ** 0.5
     new_corner_vectors = []
     for vector in corner_vectors:
-        ca = vector[0]/r
-        sa = vector[1]/r
-        new_vx = (np.cos(np.deg2rad(angle))*ca - np.sin(np.deg2rad(angle))*sa)*r
+        ca = vector[0] / r
+        sa = vector[1] / r
+        new_vx = (np.cos(np.deg2rad(angle)) * ca - np.sin(np.deg2rad(angle)) * sa) * r
         new_vy = (np.sin(np.deg2rad(angle)) * ca + np.cos(np.deg2rad(angle)) * sa) * r
         new_corner_vectors.append([new_vx, new_vy])
     new_corner_vectors = np.array(new_corner_vectors)
@@ -40,8 +49,8 @@ def save_path_image(trajectory, img, path):
 
 def save_loss_image(loss):
     for i in range(loss.shape[0]):
-        x = np.arange(0, i+1)
-        y = loss[:i+1]
+        x = np.arange(0, i + 1)
+        y = loss[:i + 1]
         # y_max = np.amax(y)
         plt.figure()
         plt.xlim(0, 15)
@@ -55,9 +64,13 @@ def save_loss_image(loss):
 
 
 def main():
-    path = os.path.dirname(os.getcwd())
-    image_name = 'lalala.png'
-    img = cv2.imread(os.path.join(path, 'pictures', image_name))
+    new_corners = get_corners([8, 12], 35, 4, 10)
+    print(new_corners)
+    print(np.amax(new_corners[0,:]))
+    print(np.amin(new_corners[0,:]))
+    # path = os.path.dirname(os.getcwd())
+    # image_name = 'lalala.png'
+    # img = cv2.imread(os.path.join(path, 'pictures', image_name))
 
     # corner_vectors = np.array([[-130, -18], [130, -18], [130, 18], [-130, 18]])
     #
