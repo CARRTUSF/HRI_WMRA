@@ -115,14 +115,12 @@ def find_contact_region(outline_pixels, index_array, center, theta):
     grasp_path_corners = get_corners(center, theta, 19, 130)
     r_max = int(round(np.amax(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
     r_min = int(round(np.amin(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
-
     contact_region = np.ndarray((0, 2), dtype=np.uint8)
+
+    # --------------------------------------find contact seeds
     contact_seeds_found = False
     contact_seeds = np.array([[-1, -1], [-1, -1]])
     seeding_sample_size = 10
-
-    search_iteration = 0
-    search_indicator = [0, 0, 0, 0]
     while not contact_seeds_found:
         search_sample = np.random.randint(r_min, r_max, seeding_sample_size)
         for k in range(seeding_sample_size):
@@ -141,66 +139,30 @@ def find_contact_region(outline_pixels, index_array, center, theta):
             if contact_seeds[0, 0] != -1 and contact_seeds[1, 0] != -1:
                 contact_seeds_found = True
                 break
+    # ---------------------------------------find contact region
+    search_indicator = [0, 0, 0, 0]
+    # index of index_array
+    search_rows = np.array([contact_seeds[0, 0], contact_seeds[0, 0], contact_seeds[1, 0], contact_seeds[1, 0]])
+    row_change = np.array([1, -1, 1, -1])
     while True:
-        search_iteration += 1
-        left_up = contact_seeds[0, 0] + search_iteration
-        left_down = contact_seeds[0, 0] - search_iteration
-        right_up = contact_seeds[1, 0] + search_iteration
-        right_down = contact_seeds[1, 0] - search_iteration
-        if not search_indicator[0] and left_up < 335:
-            stopping_row = True
-            p_i1 = index_array[left_up]
-            p_a1 = outline_pixels[p_i1[0]:p_i1[1]+1]
-            colavg1 = np.sum(p_a1[:, 1])/len(p_a1)
-            for i1 in range(len(p_a1)):
-                if p_a1[i1, 1] < colavg1:
-                    # print('1--', p_a1[i1])
-                    if inside_grasp_path(center, theta, p_a1[i1]):
-                        stopping_row = False
-                        contact_region = np.append(contact_region, [[p_i1[0] + i1, 0]], axis=0)
-            if stopping_row:
-                search_indicator[0] = 1
-
-        if not search_indicator[1] and left_down >= 0:
-            stopping_row = True
-            p_i1 = index_array[left_down]
-            p_a1 = outline_pixels[p_i1[0]:p_i1[1]+1]
-            colavg1 = np.sum(p_a1[:, 1])/len(p_a1)
-            for i1 in range(len(p_a1)):
-                if p_a1[i1, 1] < colavg1:
-                    # print('2--', p_a1[i1])
-                    if inside_grasp_path(center, theta, p_a1[i1]):
-                        stopping_row = False
-                        contact_region = np.append(contact_region, [[p_i1[0] + i1, 0]], axis=0)
-            if stopping_row:
-                search_indicator[1] = 1
-
-        if not search_indicator[2] and right_up < 335:
-            stopping_row = True
-            p_i1 = index_array[right_up]
-            p_a1 = outline_pixels[p_i1[0]:p_i1[1]+1]
-            colavg1 = np.sum(p_a1[:, 1])/len(p_a1)
-            for i1 in range(len(p_a1)):
-                if p_a1[i1, 1] > colavg1:
-                    # print('3--', p_a1[i1])
-                    if inside_grasp_path(center, theta, p_a1[i1]):
-                        stopping_row = False
-                        contact_region = np.append(contact_region, [[p_i1[0] + i1, 1]], axis=0)
-            if stopping_row:
-                search_indicator[2] = 1
-
-        if not search_indicator[3] and right_down >= 0:
-            stopping_row = True
-            p_i1 = index_array[right_down]
-            p_a1 = outline_pixels[p_i1[0]:p_i1[1]+1]
-            colavg1 = np.sum(p_a1[:, 1]) / len(p_a1)
-            for i1 in range(len(p_a1)):
-                if p_a1[i1, 1] > colavg1:
-                    if inside_grasp_path(center, theta, p_a1[i1]):
-                        stopping_row = False
-                        contact_region = np.append(contact_region, [[p_i1[0] + i1, 1]], axis=0)
-            if stopping_row:
-                search_indicator[3] = 1
+        search_rows += row_change
+        for i in range(4):
+            if not search_indicator[i]:
+                stopping_row = True
+                p_i = index_array[search_rows[i]]
+                p_a = outline_pixels[p_i[0]: p_i[1]+1]
+                col_avg = np.sum(p_a[:, 1])/len(p_a)
+                for j in range(len(p_a)):
+                    if i < 2:
+                        if p_a[j, 1] - col_avg < 0 and inside_grasp_path(center, theta, p_a[j]):
+                            stopping_row = False
+                            contact_region = np.append(contact_region, [[p_i[0]+j, 0]], axis=0)
+                    else:
+                        if p_a[j, 1] - col_avg > 0 and inside_grasp_path(center, theta, p_a[j]):
+                            stopping_row = False
+                            contact_region = np.append(contact_region, [[p_i[0]+j, 1]], axis=0)
+                if stopping_row:
+                    search_indicator[i] = 1
         if search_indicator[0]*search_indicator[1]*search_indicator[2]*search_indicator[3] == 1:
             break
 
@@ -238,7 +200,7 @@ def test_index_array(array, r1):
 
 def test1():
     path = os.path.dirname(os.getcwd())
-    mask_image_name = 'spray_mask.png'
+    mask_image_name = 'tennis_mask.png'
     image_name = 'spoon3.png'
     mask_img = cv2.imread(os.path.join(path, 'pictures', mask_image_name))
     print(mask_img.shape)
@@ -258,7 +220,7 @@ def test1():
     outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(roi, 150, 540, 7)
 
     start_time3 = time.time()
-    grasp_path_corners, contact_seeds, contact_region = find_contact_region(outline_pixels_v3, index_array, [280, 651], 30)
+    grasp_path_corners, contact_seeds, contact_region = find_contact_region(outline_pixels_v3, index_array, [320, 651], 10)
     time3 = time.time() - start_time3
 
     #print("v1 outline and normal extraction used", time1, "seconds")
@@ -317,7 +279,7 @@ def test1():
     plt.imshow(mask_img*255)
     for i in range(4):
         plt.plot(x[i], y[i], color='g')
-    plt.scatter(651, 280, color='r')
+    plt.scatter(651, 320, color='r')
     for pixel in contact_region:
         if pixel[1] == 0:
             plt.scatter(outline_pixels_v3[pixel[0]][1], outline_pixels_v3[pixel[0]][0], color='y')
