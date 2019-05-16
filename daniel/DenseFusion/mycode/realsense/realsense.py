@@ -90,6 +90,8 @@ def pipeconfig(width=640, height=480):
 
 # Main for testing
 if __name__ == '__main__':
+	URL = 'http://home.sawyer0.com:666'
+
 	# Creates pipeline and config
 	pipeline = rs2.pipeline()
 	config = pipeconfig(640, 480)
@@ -154,8 +156,12 @@ if __name__ == '__main__':
 			# Wrties frames
 			# depthImg3d = np.dstack((depthImg, depthImg, depthImg))
 			# depthImg = cv2.applyColorMap(cv2.convertScaleAbs(depthImg3d, alpha=0.03), cv2.COLORMAP_JET)
-			cv2.imwrite('{}-depth.png'.format(count), depthImg)
-			cv2.imwrite('{}-color.png'.format(count), colorImg)
+			colorPath, depthPath = '{}-color.png'.format(count), '{}-depth.png'.format(count)
+			cv2.imwrite(colorPath, colorImg)
+			cv2.imwrite(depthPath, depthImg)
+			# retUrl = uploadRGBD(URL, colorPath, depthPath)
+			poseEst = uploadRGBD(URL, colorPath, depthPath)
+			print(f'poseEst: {poseEst}')
 
 			# Views frames
 			# d = np.dstack((d, d, d))
