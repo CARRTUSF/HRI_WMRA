@@ -36,26 +36,6 @@ def parse_args():
 		default='/tmp/infer_simple',
 		type=str
 	)
-	# parser.add_argument(
-	# 	'--image-ext',
-	# 	dest='image_ext',
-	# 	help='image file name extension (default: jpg)',
-	# 	default='jpg',
-	# 	type=str
-	# )
-	# parser.add_argument(
-	# 	'--always-out',
-	# 	dest='out_when_no_box',
-	# 	help='output image even when no object is found',
-	# 	action='store_true'
-	# )
-	# parser.add_argument(
-	# 	'--output-ext',
-	# 	dest='output_ext',
-	# 	help='output image file format (default: pdf)',
-	# 	default='pdf',
-	# 	type=str
-	# )
 	parser.add_argument(
 		'--thresh',
 		dest='thresh',
@@ -70,9 +50,6 @@ def parse_args():
 		default=2.0,
 		type=float
 	)
-	# parser.add_argument(
-	# 	'--im-or-folder', help='image or folder of images', default=None, dest='im_or_folder'
-	# )
 	parser.add_argument(
 		'--cuda',
 		dest='cuda',
