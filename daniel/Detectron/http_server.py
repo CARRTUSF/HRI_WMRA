@@ -80,7 +80,7 @@ def parse_args():
 args = parse_args()
 DOMAIN = str(args.ip)
 PORT = int(args.port)
-FULLDOMAIN = 'http://{}:{}'.format(DOMAIN, PORT)
+FULLDOMAIN = f'http://{DOMAIN}:{PORT}'
 app = flask.Flask(__name__)
 
 dummy_coco_dataset = None
