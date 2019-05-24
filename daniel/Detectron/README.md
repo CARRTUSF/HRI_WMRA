@@ -34,7 +34,7 @@ Run HTTP Client
 conda activate detectron
 
 # Run client, IP_ADDRESS is address or domain of HTTP Server above
-bash http_client.sh http://IP_ADDRESS:665
+bash http_client.sh IP PORT
 ```
 
 
