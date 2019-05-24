@@ -15,7 +15,7 @@ conda install -c pytorch pytorch -y
 conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask werkzeug requests numpy pycocotools pillow torchvision -y
 conda install -c menpo  opencv -y
 conda install numpy -y
-pip install opencv-contrib-python pyrealsense2
+pip install opencv-contrib-python pyrealsense2 jsonpickle
 
 # Build Detectron libs
 make
