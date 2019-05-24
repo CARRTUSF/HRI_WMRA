@@ -21,20 +21,22 @@ pip install opencv-contrib-python pyrealsense2 jsonpickle
 make
 ```
 Run HTTP Sever
+bash http_server.sh CUDA# IP PORT
 ```
 # Activate conda env above if not already active
 conda activate detectron
 
 # Run server, can run in screen or tmux
-bash http_server.sh CUDA IP PORT
+bash http_server.sh 0 127.0.0.1 665
 ```
 Run HTTP Client
+bash http_client_demo.sh IP PORT
 ```
 # Activate conda env above if not already active
 conda activate detectron
 
 # Run client, IP_ADDRESS is address or domain of HTTP Server above
-bash http_client.sh IP PORT
+bash http_client_demo.sh 127.0.0.1 665
 ```
 
 
