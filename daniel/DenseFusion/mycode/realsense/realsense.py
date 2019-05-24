@@ -90,7 +90,9 @@ def pipeconfig(width=640, height=480):
 
 # Main for testing
 if __name__ == '__main__':
-	URL = 'http://home.sawyer0.com:666'
+	domain = sys.argv[1]
+	port = sys.argv[2]
+	URL = f'http://{domain}:{port}'
 
 	# Creates pipeline and config
 	pipeline = rs2.pipeline()

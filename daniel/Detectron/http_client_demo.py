@@ -99,7 +99,9 @@ def downloadZip(url, outDir='./'):
 
 if __name__ == '__main__':
 	# Arguments
-	url = sys.argv[1]
+	domain = sys.argv[1]
+	port = sys.argv[2]
+	url = f'http://{domain}:{port}'
 
 	# Starts captures
 	tmpName = 'tmp-img.png'
