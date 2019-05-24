@@ -104,7 +104,6 @@ args = parse_args()
 DOMAIN = str(args.ip)
 PORT = int(args.port)
 FULLDOMAIN = 'http://{}:{}'.format(DOMAIN, PORT)
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'tiff', 'bmp'])
 UPLOAD_FOLDER = 'uploads-pipe1'
 UPLOAD_FOLDER_REL = '/uploads-pipe1/'
 app = flask.Flask(__name__)
@@ -116,7 +115,6 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]=str(args.cuda)
 
 from caffe2.python import workspace
-
 from detectron.core.config import assert_and_infer_cfg
 from detectron.core.config import cfg
 from detectron.core.config import merge_cfg_from_file
@@ -133,12 +131,6 @@ c2_utils.import_detectron_ops()
 # OpenCL may be enabled by default in OpenCV3; disable it because it's not
 # thread safe and causes unwanted GPU memory allocations.
 cv2.ocl.setUseOpenCL(False)
-
-def allowedFile(fname):
-	if fname[-3:].lower() in ALLOWED_EXTENSIONS or fname[-4:].lower() in ALLOWED_EXTENSIONS:
-		return True
-	else:
-		return False
 
 @app.route('/', methods=['POST'])
 def upload_file():
@@ -170,104 +162,14 @@ def upload_file():
 		print('No retVals\n')
 		return flask.Response(response=None)
 
+	# Encodes to png files
 	bbList, labelList, scoreList, maskList = retVals
 	pngList = [cv2.imencode('.png', m)[1] for m in maskList]
 	retList = [cv2.imencode('.png', cvimg)[1], bbList, labelList, scoreList, pngList]
-	# print('\nlen(maskList) = {}, len(bbList) = {}\n'.format(len(maskList), len(bbList)))
-	# maskList = []
-	# for i in range(masks.shape[-1]):
-	# 	maskList.append(masks[...,i])
-	# print(len(maskList))
 
-	# Creates object dictionary
-	objDict = {'vis' : cvimg}
-	for i in range(len(maskList)):
-		objDict.update({
-			i : {
-				'bb' : bbList[i],
-				'label' : labelList[i],
-				'score' : scoreList[i],
-				'mask' : maskList[i]
-			}
-		})
-
-	# Encodes and sends file
-	objDict_encoded = jsonpickle.encode(objDict)
+	# Encodes to jsonpickle and sends json
 	retList_encoded = jsonpickle.encode(retList)
-	print(f'obj = {sys.getsizeof(objDict_encoded)}, ret = {sys.getsizeof(retList_encoded)}\n')
 	return flask.Response(response=retList_encoded, status=200, mimetype='application/json')
-	# # Creates json and images
-	# ofname = os.path.basename(fname) + '.csv'
-	# out_name = os.path.join(args.output_dir, ofname)
-	# opathList = [out_name]
-	# onameList = [ofname]
-	# arcnameList = ['info.csv']
-	# count = 0
-	# with open(out_name, 'w') as of:
-	# 	for bb, cl, sc, ma in zip(bbList, classList, scoreList, maskList):
-	# 		# Adds info to csv
-	# 		ostr = ','.join((str(count) + '.' + args.output_ext, str(sc), str(cl), str(bb[0]), str(bb[1]), str(bb[2]), str(bb[3])))
-	# 		of.write(ostr + '\n')
-	# 		# print(ostr)
-
-	# 		# Saves mask image
-	# 		oname = os.path.basename(ofname) + '-m{}.'.format(count) + args.output_ext
-	# 		opath = os.path.join(args.output_dir, oname)
-	# 		opathList.append(opath)
-	# 		onameList.append(oname)
-	# 		arcnameList.append('{}.{}'.format(count, args.output_ext))
-	# 		cv2.imwrite(opath, ma)
-	# 		count += 1
-
-
-
-	# # Save image
-	# ofname = os.path.basename(fname) + '-vis.' + args.output_ext
-	# out_name = os.path.join(args.output_dir, ofname)
-	# cv2.imwrite(out_name, cvimg)
-	# opathList.append(out_name)
-	# arcnameList.append('vis.' + args.output_ext)
-
-	# # Creates urllist.txt
-	# # print(onameList)
-	# urlfname = 'urllist-{}.txt'.format(fname.split('.')[0])
-	# flistPath = os.path.join(args.output_dir, urlfname)
-	# opathList.append(flistPath)
-	# arcnameList.append('urllist.txt')
-	# onameList.append(urlfname)
-	# with open(flistPath, 'w') as fl:
-	# 	count = 0
-	# 	for oname in onameList:
-	# 		if not oname.endswith('csv'):
-	# 			fl.write(FULLDOMAIN + UPLOAD_FOLDER_REL + oname + ',' + '{}.{}'.format(count, args.output_ext) + '\n')
-	# 			count += 1
-	# 	fl.write(FULLDOMAIN + UPLOAD_FOLDER_REL + ofname + ',' + 'vis.{}'.format(args.output_ext) + '\n')
-
-	# # Zip files
-	# zipFname = fname + '.zip'
-	# zipFpath = os.path.join(args.output_dir, zipFname)
-	# with ZipFile(zipFpath, 'w') as ofz:
-	# 	# print(opathList, arcnameList)
-	# 	for opath, arcname in zip(opathList, arcnameList):
-	# 		# print(opath, arcname)
-	# 		ofz.write(opath, arcname=arcname)
-
-
-	# # print('\n{} {} {} {}'.format(type(bbList), type(classList), type(scoreList), type(maskList)))
-	# # for count, box in enumerate(bbList):
-	# # 	print(count, box, classList[count], scoreList[count])
-
-	
-
-	# # retUrl = os.path.join(FULLDOMAIN, UPLOAD_FOLDER, zipFname)
-	# retUrl = FULLDOMAIN + UPLOAD_FOLDER_REL + zipFname
-	# print('\n***** retUrl = {}, ofname = {} *****\n'.format(retUrl, ofname))
-
-	# # cv2.imshow('image', cvimg)
-	# # wk = cv2.waitKey(0)
-	# # if wk == 27:
-	# #     cv2.destroyAllWindows()
-	# return retUrl
 
 @app.route('/{}/<filename>'.format(UPLOAD_FOLDER))
 def uploaded_file(filename):
@@ -302,5 +204,4 @@ def main():
 if __name__ == '__main__':
 	workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
 	setup_logging(__name__)
-	# args = parse_args()
 	main()

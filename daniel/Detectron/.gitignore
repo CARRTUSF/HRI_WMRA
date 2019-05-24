@@ -24,7 +24,7 @@ detectron/datasets/data/*
 detectron/utils/cython_*.c
 
 # Http output
-uploads-pipe1/*
+uploads-pipe1
 tmp
 tmp-img.png
 tmp.zip
