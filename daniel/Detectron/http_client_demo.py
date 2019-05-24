@@ -1,19 +1,6 @@
-import os, sys, requests, io, json, zipfile
+import os, sys, requests, zipfile
 from zipfile import ZipFile
-from PIL import Image
 import numpy as np, cv2, jsonpickle
-
-# def upload(url, fpath):
-# 	with open(fpath, 'rb') as f:
-# 		files = {'file' : f}
-
-# 		try:
-# 			r = requests.post(url, files=files)
-# 			# print(r.text)
-# 			return r.text
-
-# 		except Exception as e:
-# 			print('Did not send file: {}\nException: {}'.format(fpath, e))
 
 def upload(url, frame):
 	# Prep headers for http req
@@ -37,10 +24,6 @@ def upload(url, frame):
 			return None
 	except:
 		return None
-
-def downloadImg(url):
-	r = requests.get(url)
-	return Image.open(io.BytesIO(r.content))
 
 def downloadJson(url):
 	fname = 'tmp.json'
@@ -76,26 +59,14 @@ if __name__ == '__main__':
 
 		count = 0
 		while True:
-			# print('realsense')
 			# Get frames
 			frames = pipeline.wait_for_frames()
 			frame = np.asanyarray(frames.get_color_frame().get_data())
+			
+			# Sends to detectron
 			retList = upload(url, frame)
 			if not retList:
 				continue
-
-			# Writes img and uploads
-			# cv2.imwrite(tmpName, frame)
-			# retUrl = upload(url, tmpName)
-			# print(retUrl)
-
-			# # Checks retUrl valid
-			# if not retUrl or not retUrl.startswith('http://'):
-			# 	continue
-			# # print('debug')
-
-			# # Downloads infered stuff
-			# objDict = downloadZip(retUrl, tmpDir)
 
 			# Shows img
 			count += 1

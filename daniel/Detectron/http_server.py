@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import os, sys, flask, werkzeug as wz, json, zipfile, io
+import os, sys, flask, werkzeug as wz, zipfile
 from zipfile import ZipFile
 from collections import defaultdict
 import argparse
@@ -81,8 +81,6 @@ args = parse_args()
 DOMAIN = str(args.ip)
 PORT = int(args.port)
 FULLDOMAIN = 'http://{}:{}'.format(DOMAIN, PORT)
-UPLOAD_FOLDER = 'uploads-pipe1'
-UPLOAD_FOLDER_REL = '/uploads-pipe1/'
 app = flask.Flask(__name__)
 
 dummy_coco_dataset = None
@@ -148,10 +146,6 @@ def upload_file():
 	retList_encoded = jsonpickle.encode(retList)
 	return flask.Response(response=retList_encoded, status=200, mimetype='application/json')
 
-@app.route('/{}/<filename>'.format(UPLOAD_FOLDER))
-def uploaded_file(filename):
-	return flask.send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 def main():
 	# Load network
 	global model, dummy_coco_dataset
@@ -169,12 +163,7 @@ def main():
 
 	model = infer_engine.initialize_model_from_cfg(args.weights)
 	dummy_coco_dataset = dummy_datasets.get_coco_dataset()
-	
-	# Setup upload folder and run server
-	if not os.path.exists(UPLOAD_FOLDER):
-		os.makedirs(UPLOAD_FOLDER)
 
-	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	app.run(port=PORT, host='0.0.0.0', debug=False)
 	# app.run(port=PORT, host=DOMAIN, debug=False)
 
