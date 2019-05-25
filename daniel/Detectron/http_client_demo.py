@@ -61,7 +61,6 @@ if __name__ == '__main__':
 		config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, 30)
 		profile = pipeline.start(config)
 
-		count = 0
 		while True:
 			# Get frames
 			frames = pipeline.wait_for_frames()
@@ -73,8 +72,6 @@ if __name__ == '__main__':
 				continue
 
 			# Shows img
-			count += 1
-			print(f'showing img {count}')
 			visImg = retList[0]
 			visImg = cv2.resize(visImg, (1200, 900))
 			cv2.imshow('Inference', visImg)
