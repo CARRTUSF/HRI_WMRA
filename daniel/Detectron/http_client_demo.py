@@ -25,18 +25,6 @@ def upload(url, frame):
 	except:
 		return None
 
-def downloadJson(url):
-	fname = 'tmp.json'
-	r = requests.get(url)
-	with open(fname, 'wb') as of:
-		of.write(r.content)
-
-	jsonDict = {}
-	with open(fname) as inf:
-		jsonDict = json.load(inf)
-	
-	return jsonDict
-
 if __name__ == '__main__':
 	# Arguments
 	if len(sys.argv) < 2:
@@ -48,11 +36,7 @@ if __name__ == '__main__':
 	url = f'http://{domain}:{port}'
 
 	# Starts captures
-	tmpName = 'tmp-img.png'
-	tmpDir = 'tmp'
 	width, height = 640, 480
-
-	# Tries realsense first
 	try:
 		import pyrealsense2 as rs 
 		pipeline = rs.pipeline()
