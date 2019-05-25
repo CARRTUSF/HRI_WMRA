@@ -54,32 +54,29 @@ def parse_args():
 		'--cuda',
 		dest='cuda',
 		help='Enter cuda card number to use as integer',
-		default=0,
+		default='0',
 		type=str
 	)
 	parser.add_argument(
 		'--ip',
 		dest='ip',
 		help='Server IP',
-		default=0,
+		default='127.0.0.1',
 		type=str
 	)
 	parser.add_argument(
 		'--port',
 		dest='port',
 		help='Server Port',
-		default=0,
+		default='665',
 		type=str
 	)
-	if len(sys.argv) == 1:
-		parser.print_help()
-		sys.exit(1)
 	return parser.parse_args()
 
 
 args = parse_args()
-DOMAIN = str(args.ip)
-PORT = int(args.port)
+DOMAIN = args.ip
+PORT = args.port
 FULLDOMAIN = f'http://{DOMAIN}:{PORT}'
 app = flask.Flask(__name__)
 
@@ -87,7 +84,7 @@ dummy_coco_dataset = None
 model = None
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]=str(args.cuda)
+os.environ["CUDA_VISIBLE_DEVICES"]=args.cuda
 
 from caffe2.python import workspace
 from detectron.core.config import assert_and_infer_cfg
@@ -164,8 +161,8 @@ def main():
 	model = infer_engine.initialize_model_from_cfg(args.weights)
 	dummy_coco_dataset = dummy_datasets.get_coco_dataset()
 
-	app.run(port=PORT, host='0.0.0.0', debug=False)
-	# app.run(port=PORT, host=DOMAIN, debug=False)
+	# app.run(port=PORT, host='0.0.0.0', debug=False)
+	app.run(port=PORT, host=DOMAIN, debug=False)
 
 if __name__ == '__main__':
 	workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])

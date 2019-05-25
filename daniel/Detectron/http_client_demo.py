@@ -39,8 +39,12 @@ def downloadJson(url):
 
 if __name__ == '__main__':
 	# Arguments
-	domain = sys.argv[1]
-	port = sys.argv[2]
+	if len(sys.argv) < 2:
+		domain = '127.0.0.1'
+		port = '665'
+	else:
+		domain = sys.argv[1]
+		port = sys.argv[2]
 	url = f'http://{domain}:{port}'
 
 	# Starts captures
