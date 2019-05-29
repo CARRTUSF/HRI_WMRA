@@ -29,7 +29,7 @@ conda activate detectron
 # Run server, can run in screen or tmux
 bash http_server.sh 0 127.0.0.1 665
 ```
-## Run HTTP Client
+## Run HTTP Client Demo
 bash http_client_demo.sh IP PORT
 ```
 # Activate conda env above if not already active
