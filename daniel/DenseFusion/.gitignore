@@ -2,3 +2,6 @@ trained_checkpoints
 outDir
 uploads-pipe2
 YCB_Video_Dataset.zip
+Linemod_preprocessed.zip
+datasets/ycb/YCB_Video_Dataset
+datasets/linemod/Linemod_preprocessed
