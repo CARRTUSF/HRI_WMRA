@@ -5,3 +5,4 @@ YCB_Video_Dataset.zip
 Linemod_preprocessed.zip
 datasets/ycb/YCB_Video_Dataset
 datasets/linemod/Linemod_preprocessed
+*.pyc
