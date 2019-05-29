@@ -32,8 +32,15 @@ bash http_server.sh 0 127.0.0.1 665
 ## Run HTTP Client Demo
 bash http_client_demo.sh IP PORT
 ```
-# Activate conda env above if not already active
-conda activate detectron
+# Install deps for system 
+sudo -H python3 -m pip install -U pip requests numpy opencv-python opencv-contrib-python jsonpickle pyrealsense2
+
+# Install deps for user
+python3 -m pip install -U --user pip requests numpy opencv-python opencv-contrib-python jsonpickle pyrealsense2
+
+# Install conda and activate conda
+conda activate python3.6env
+pip install -U pip requests numpy opencv-python opencv-contrib-python jsonpickle pyrealsense2
 
 # Run client, IP_ADDRESS is address or domain of HTTP Server above
 bash http_client_demo.sh 127.0.0.1 665
