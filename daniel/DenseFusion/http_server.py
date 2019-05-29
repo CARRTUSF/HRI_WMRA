@@ -27,12 +27,6 @@ app = flask.Flask(__name__)
 refiner = None
 estimator = None
 
-# Transformation stuff
-norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-border_list = [-1, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680]
-xmap = np.array([[j for i in range(640)] for j in range(480)])
-ymap = np.array([[i for i in range(640)] for j in range(480)])
-
 # Original params
 # cam_cx = 312.9869
 # cam_cy = 241.3109
@@ -86,6 +80,12 @@ from torch.autograd import Variable
 from datasets.ycb.dataset import PoseDataset
 from lib.network import PoseNet, PoseRefineNet
 from lib.transformations import euler_matrix, quaternion_matrix, quaternion_from_matrix
+
+# Transformation stuff
+norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+border_list = [-1, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680]
+xmap = np.array([[j for i in range(img_length)] for j in range(img_width)])
+ymap = np.array([[i for i in range(img_length)] for j in range(img_width)])
 
 # Converts bounding box to their format
 def get_bbox(posecnn_rois, idx=None):
@@ -190,7 +190,7 @@ def upload_file():
 	_, bbList, labelList, scoreList, maskList = retList
 	img = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
 	depth = imd
-	print('depth:\n', depth[len(depth)/2:len(depth)/2+10, len(depth[0])/2:len(depth[0])/2+10])
+	print('depth:\n', depth[len(depth)/2-10:len(depth)/2+10, len(depth[0])/2-10:len(depth[0])/2+10])
 	print('max depth:', depth.max())
 	my_result_wo_refine = []
 	my_result = []
