@@ -1,9 +1,9 @@
 # HTTP Server Setup
-Download & Setup Conda Environment
+## Download & Setup Conda Environment
 ```
 # Clone repo and enter directory
-git clone https://github.com/sawyermade/Detectron.git
-cd Detectron
+git clone https://github.com/CARRTUSF/HRI_WMRA.git
+cd HRI_WMRA/daniel/Detectron
 
 # Download model from facebook's model zoo
 wget https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl -O models/e2e_mask_rcnn_R-101-FPN_2x.pkl
@@ -12,7 +12,7 @@ wget https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mas
 conda create -n detectron python=3.6 -y
 conda activate detectron
 conda install -c pytorch pytorch -y
-conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask werkzeug requests numpy pycocotools pillow torchvision -y
+conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask requests numpy pycocotools pillow torchvision -y
 conda install -c menpo  opencv -y
 conda install numpy -y
 pip install opencv-contrib-python pyrealsense2 jsonpickle
@@ -20,7 +20,7 @@ pip install opencv-contrib-python pyrealsense2 jsonpickle
 # Build Detectron libs
 make
 ```
-Run HTTP Sever
+## Run HTTP Sever
 bash http_server.sh CUDA# IP PORT
 ```
 # Activate conda env above if not already active
@@ -29,7 +29,7 @@ conda activate detectron
 # Run server, can run in screen or tmux
 bash http_server.sh 0 127.0.0.1 665
 ```
-Run HTTP Client
+## Run HTTP Client
 bash http_client_demo.sh IP PORT
 ```
 # Activate conda env above if not already active

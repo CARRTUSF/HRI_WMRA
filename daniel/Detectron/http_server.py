@@ -3,8 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import os, sys, flask, werkzeug as wz, zipfile
-from zipfile import ZipFile
+import os, sys, flask
 from collections import defaultdict
 import argparse
 import cv2  # NOQA (Must import before importing caffe2 due to bug in cv2)
@@ -27,13 +26,6 @@ def parse_args():
 		dest='weights',
 		help='weights model file (/path/to/model_weights.pkl)',
 		default=None,
-		type=str
-	)
-	parser.add_argument(
-		'--output-dir',
-		dest='output_dir',
-		help='directory for visualization pdfs (default: /tmp/infer_simple)',
-		default='/tmp/infer_simple',
 		type=str
 	)
 	parser.add_argument(
@@ -71,21 +63,24 @@ def parse_args():
 		default='665',
 		type=str
 	)
+	if(len(sys.argv)) < 3:
+		opt.print_help()
+		sys.exit(1)
 	return parser.parse_args()
 
-
+# Globals
 args = parse_args()
 DOMAIN = args.ip
 PORT = args.port
-FULLDOMAIN = f'http://{DOMAIN}:{PORT}'
 app = flask.Flask(__name__)
-
 dummy_coco_dataset = None
 model = None
 
+# Cuda device setup
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]=args.cuda
 
+# Network imports
 from caffe2.python import workspace
 from detectron.core.config import assert_and_infer_cfg
 from detectron.core.config import cfg
@@ -97,13 +92,13 @@ import detectron.core.test_engine as infer_engine
 import detectron.datasets.dummy_datasets as dummy_datasets
 import detectron.utils.c2 as c2_utils
 import detectron.utils.vis as vis_utils
-
 c2_utils.import_detectron_ops()
 
 # OpenCL may be enabled by default in OpenCV3; disable it because it's not
 # thread safe and causes unwanted GPU memory allocations.
 cv2.ocl.setUseOpenCL(False)
 
+# Awaits POST requests for inference
 @app.route('/', methods=['POST'])
 def upload_file():
 	# Get request and unzip/decode
@@ -141,16 +136,16 @@ def upload_file():
 
 	# Encodes to jsonpickle and sends json
 	retList_encoded = jsonpickle.encode(retList)
+
+	# returns [vis.png, bbList, labelList, scoreList, maskList]
 	return flask.Response(response=retList_encoded, status=200, mimetype='application/json')
 
 def main():
 	# Load network
 	global model, dummy_coco_dataset
-	# logger = logging.getLogger(__name__)
 
 	merge_cfg_from_file(args.cfg)
 	cfg.NUM_GPUS = 1
-	# args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
 	assert_and_infer_cfg(cache_urls=False)
 
 	assert not cfg.MODEL.RPN_ONLY, \
@@ -161,7 +156,7 @@ def main():
 	model = infer_engine.initialize_model_from_cfg(args.weights)
 	dummy_coco_dataset = dummy_datasets.get_coco_dataset()
 
-	# app.run(port=PORT, host='0.0.0.0', debug=False)
+	# app.run(port=PORT, host='0.0.0.0', debug=True)
 	app.run(port=PORT, host=DOMAIN, debug=False)
 
 if __name__ == '__main__':

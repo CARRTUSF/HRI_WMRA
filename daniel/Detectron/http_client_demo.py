@@ -19,6 +19,8 @@ def upload(url, frame):
 			retList = jsonpickle.decode(response.text)
 			retList[0] = cv2.imdecode(retList[0], cv2.IMREAD_COLOR)
 			retList[-1] = [cv2.imdecode(m, cv2.IMREAD_GRAYSCALE) for m in retList[-1]]
+			
+			# returns [vis.png, bbList, labelList, scoreList, maskList]
 			return retList
 		else:
 			return None
