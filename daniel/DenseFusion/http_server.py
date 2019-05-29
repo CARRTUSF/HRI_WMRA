@@ -3,7 +3,6 @@ import os, sys, flask, requests, jsonpickle, argparse
 # Argument parser
 def parse_args():
 	parser = argparse.ArgumentParser()
-	parser.ArgumentParser()
 	parser.add_argument('-m', '--model', type=str, default = '',  help='resume PoseNet model')
 	parser.add_argument('-mr', '--refine_model', type=str, default = '',  help='resume PoseRefineNet model')
 	parser.add_argument('-c', '--cuda', type=str, default = '1',  help='Cuda card number to use')
