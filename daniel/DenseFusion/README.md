@@ -1,3 +1,43 @@
+# HTTP Server Setup
+## Download & Setup Conda Environment
+```
+# Clone repo and enter directory
+git clone https://github.com/CARRTUSF/HRI_WMRA.git
+cd HRI_WMRA/daniel/DenseFusion
+
+# Download model from facebook's model zoo
+bash download_models-ycb.sh
+
+# Create conda environment with everything needed to run inference
+conda create -n densefusion python=3.6 -y
+conda activate densefusion
+conda install -c pytorch pytorch -y
+conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask requests numpy pycocotools pillow torchvision -y
+conda install -c menpo  opencv -y
+conda install numpy -y
+pip install opencv-contrib-python pyrealsense2 jsonpickle
+```
+## Run HTTP Sever
+First get Detectron HTTP Server running in HRI_WMRA/daniel/Detectron \
+bash http_server.sh CUDA# IP PORT DetectronIP DetectronPORT
+```
+# Activate conda env above if not already active
+conda activate densefusion
+
+# Run server, can run in screen or tmux
+bash http_server.sh 0 127.0.0.1 666 127.0.0.1 665
+```
+## Run HTTP Client
+bash http_client_demo.sh IP PORT
+```
+# Activate conda env above if not already active
+conda activate densefusion
+
+# Run client
+bash http_client_demo.sh 127.0.0.1 666
+```
+
+
 # DenseFusion
 
 <p align="center">
