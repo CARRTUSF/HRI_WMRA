@@ -6,3 +6,4 @@ wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download
 && mv trained_checkpoints/trained*/linemod trained_checkpoints/linemod \
 && rm -r trained_checkpoints/trained*/ \
 && rm trained_checkpoints.zip
+echo 'done'
