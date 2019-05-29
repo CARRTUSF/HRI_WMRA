@@ -1,6 +1,7 @@
 import os, sys, requests
 import numpy as np, cv2, jsonpickle
 
+# Uploads to Detectron
 def upload(url, frame):
 	# Prep headers for http req
 	content_type = 'application/json'
@@ -26,7 +27,7 @@ def upload(url, frame):
 	except:
 		return None
 
-if __name__ == '__main__':
+def main():
 	# Arguments
 	if len(sys.argv) < 2:
 		domain = '127.0.0.1'
@@ -67,4 +68,7 @@ if __name__ == '__main__':
 
 	except Exception as e:
 		print(e)
+
+if __name__ == '__main__':
+	main()
 		
