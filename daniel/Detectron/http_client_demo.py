@@ -1,5 +1,4 @@
-import os, sys, requests, zipfile
-from zipfile import ZipFile
+import os, sys, requests
 import numpy as np, cv2, jsonpickle
 
 def upload(url, frame):
