@@ -1,4 +1,4 @@
-import os, sys, flask, requests, jsonpickle, argparse 
+import os, sys, flask, requests, jsonpickle, argparse, cv2
 
 # Argument parser
 def parse_args():
@@ -40,6 +40,8 @@ cam_cy = 242.552
 cam_fx = 618.2
 cam_fy = 618.74
 cam_scale = 0.0010000000474974513
+# cam_scale = 1000
+# cam_scale = 100
 
 # Network/Model Params
 num_obj = 21
@@ -164,10 +166,12 @@ def createCSV(bbList, labelList, scoreList, poseList):
 	# Creates csv string using data form inferences
 	csvStr = ''
 	for bbs, label, score, pose in zip(bbList, labelList, scoreList, poseList):
+		# pose = pose[4:] + pose[:4]
 		line = [label, str(score)] + [str(f) for f in bbs] + [str(p) for p in pose]
 		lineStr = ','.join(line) + '\n'
 		csvStr += lineStr
 
+	# Returns label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4
 	return csvStr
 
 # Awaits POST requests for RGBd file upload
@@ -179,19 +183,21 @@ def upload_file():
 	# Get request and unzip/decode
 	r = flask.request
 	imlist = jsonpickle.decode(r.data)
-	im, imd = cv2.imdecode(imlist[0], cv2.IMREAD_COLOR), cv2.imdecode(imlist[1], cv2.IMREAD_GRAYSCALE)
+	im, imd = cv2.imdecode(imlist[0], cv2.IMREAD_COLOR), cv2.imdecode(imlist[1], cv2.IMREAD_ANYDEPTH)
 
 	# Send RGB to Detectron Mask R-CNN
 	url = f'http://{DET_DOMAIN}:{DET_PORT}'
 	# returns [vis.png, bbList, labelList, scoreList, maskList]
 	retList = upload(url, im)
+	if not retList:
+		return None
 
 	# Starts shit
 	_, bbList, labelList, scoreList, maskList = retList
 	img = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
 	depth = imd
-	print('depth:\n', depth[len(depth)/2-10:len(depth)/2+10, len(depth[0])/2-10:len(depth[0])/2+10])
-	print('max depth:', depth.max())
+	# print('depth:\n', depth[len(depth)/2-10:len(depth)/2+10, len(depth[0])/2-10:len(depth[0])/2+10])
+	# print('max depth:', depth.max())
 	my_result_wo_refine = []
 	my_result = []
 	itemid = 1
@@ -212,6 +218,7 @@ def upload_file():
 	# 	mask = mask_label * mask_depth
 	
 	# Goes through all objects Detectron found
+	cloudList = []
 	for bb, mask, score, label in zip(bbList, maskList, scoreList, labelList):
 		# cmin, rmin, cmax, rmax = bb
 		# print(cmin, rmin, cmax, rmax)
@@ -244,10 +251,16 @@ def upload_file():
 		ymap_masked = ymap[rmin:rmax, cmin:cmax].flatten()[choose][:, np.newaxis].astype(np.float32)
 		choose = np.array([choose])
 
-		pt2 = depth_masked / cam_scale
+		pt2 = depth_masked * cam_scale
+		# pt2 = depth_masked / cam_scale
+		# print(pt2)
 		pt0 = (ymap_masked - cam_cx) * pt2 / cam_fx
 		pt1 = (xmap_masked - cam_cy) * pt2 / cam_fy
 		cloud = np.concatenate((pt0, pt1, pt2), axis=1)
+		
+		# Copies cloud to list
+		cloud_copy_og = np.copy(cloud)
+		cloudList.append(cloud_copy_og)
 
 		img_masked = np.array(img)[:, :, :3]
 		img_masked = np.transpose(img_masked, (2, 0, 1))
@@ -325,6 +338,12 @@ def upload_file():
 
 	# Creates return csv
 	retStr = createCSV(bbList, labelList, scoreList, my_result)
+
+	# Write cloud files
+	# if not os.path.exists('test_imgs'):
+	# 	os.makedirs('test_imgs')
+	# for cloud in cloudList:
+
 	
 	return retStr
 
