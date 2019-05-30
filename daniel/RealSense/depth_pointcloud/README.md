@@ -1,0 +1,3 @@
+rosrun tf static_transform_publisher 0.008150872288423337 -0.042632291333799 0.12018989962090264 0.7450257631746091 0.6244169688858585 0.23448466740212454 0.007549962039833242 /camera_link /bottle 50
+
+rosrun tf static_transform_publisher X Y Z Q1 Q2 Q3 W /parent_frame /child_frame Hz 
