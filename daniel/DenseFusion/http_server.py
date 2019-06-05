@@ -35,13 +35,18 @@ estimator = None
 # cam_scale = 10000.0
 
 # Intel RealSense D435 Params Color
-cam_cx = 327.69
-cam_cy = 242.552
-cam_fx = 618.2
-cam_fy = 618.74
-cam_scale = 0.0010000000474974513
-# cam_scale = 1000
-# cam_scale = 100
+# cam_cx = 327.69
+# cam_cy = 242.552
+# cam_fx = 618.2
+# cam_fy = 618.74
+# cam_scale = 0.0010000000474974513
+
+# Cam Parameters Global
+cam_scale = None
+cam_cx = None
+cam_cy = None
+cam_fx = None
+cam_fy = None
 
 # Network/Model Params
 num_obj = 21
@@ -86,6 +91,7 @@ from lib.transformations import euler_matrix, quaternion_matrix, quaternion_from
 # Transformation stuff
 norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 border_list = [-1, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680]
+# border_list = [-1, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680, 720, 740, 780, 820, 860]
 xmap = np.array([[j for i in range(img_length)] for j in range(img_width)])
 ymap = np.array([[i for i in range(img_length)] for j in range(img_width)])
 
@@ -178,12 +184,17 @@ def createCSV(bbList, labelList, scoreList, poseList):
 @app.route('/', methods=['POST'])
 def upload_file():
 	# Globals
-	global refiner, estimator
+	global refiner, estimator, cam_scale, cam_cx, cam_cy, cam_fx, cam_fy
 
 	# Get request and unzip/decode
 	r = flask.request
 	imlist = jsonpickle.decode(r.data)
 	im, imd = cv2.imdecode(imlist[0], cv2.IMREAD_COLOR), cv2.imdecode(imlist[1], cv2.IMREAD_ANYDEPTH)
+	intr = imlist[2]
+
+	# Sets intrinsics
+	# print(f'Intrinsics: {intr}')
+	cam_scale, cam_cx, cam_cy, cam_fx, cam_fy = intr
 
 	# Send RGB to Detectron Mask R-CNN
 	url = f'http://{DET_DOMAIN}:{DET_PORT}'
@@ -222,6 +233,7 @@ def upload_file():
 	for bb, mask, score, label in zip(bbList, maskList, scoreList, labelList):
 		# cmin, rmin, cmax, rmax = bb
 		# print(cmin, rmin, cmax, rmax)
+		# print(bb)
 		rmin, rmax, cmin, cmax = get_bbox(bb, None)
 		# print(cmin, rmin, cmax, rmax)
 		mask_depth = ma.getmaskarray(ma.masked_not_equal(depth, 0))
