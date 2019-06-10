@@ -34,6 +34,18 @@ def upload(url, color, depth, intr):
 	except:
 		return None
 
+def convert_rviz(input_str):
+	lineList = input_str.strip('\n').split('\n')
+
+	new_str = ''
+	for line in lineList:
+		label, score, bbxmin, bbymin, bbxmax, bbymax, w, q1, q2, q3, x, y, z = line.split(',')
+		x, y, z = float(x) * -1.0, float(y) * -1.0, float(z)
+		nl = f'rosrun tf static_transform_publisher {z} {x} {y} {q1} {q2} {q3} {w} /camera_link /{label} 60\n'
+		new_str += nl
+
+	return new_str
+
 def main():
 	# Globals
 	global cam_cx, cam_cy, cam_fx, cam_fy, cam_scale
@@ -62,8 +74,8 @@ def main():
 	# Sets up realsense
 	pipeline = rs.pipeline()
 	config = rs.config()
-	config.enable_stream(rs.stream.depth, width, height, rs.format.z16, 30)
-	config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, 30)
+	config.enable_stream(rs.stream.depth, width, height, rs.format.z16, fps)
+	config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
 	profile = pipeline.start(config)
 
 	# Get intrinsics
@@ -167,6 +179,7 @@ def main():
 		outpath_pca = os.path.join(outdir, f'{str(count).zfill(num_len)}_pc_aligned.ply')
 		outpath_depth_filter = os.path.join(outdir, f'{str(count).zfill(num_len)}_depth_filter.png')
 		outpath_csv = os.path.join(outdir, f'{str(count).zfill(num_len)}_inf.csv')
+		outpath_rviz = os.path.join(outdir, f'{str(count).zfill(num_len)}_inf.rviz')
 
 		# Writes color and depth
 		cv2.imwrite(outpath_color, color_img)
@@ -188,8 +201,14 @@ def main():
 		# Writes inference csv
 		# CSV Format label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4
 		with open(outpath_csv, 'w') as of:
-			titles = f'label,score,bbxmin,bbymin,bbxmax,bbymax,xcenter,ycenter,zcenter,q1,q2,q3,q4\n'
+			titles = f'label,score,bbxmin,bbymin,bbxmax,bbymax,w,q1,q2,q3,xcenter,ycenter,zcenter,\n'
 			of.write(titles + ret_str)
+
+		# Writes rviz stuff
+		# rosrun tf static_transform_publisher Z -X -Y Q1 Q2 Q3 W /camera_link /label 60
+		rviz_str = convert_rviz(ret_str)
+		with open(outpath_rviz, 'w') as of:
+			of.write(rviz_str)
 
 		# Increments count
 		print(f'Frame:{str(count).zfill(num_len)} Complete\n')
