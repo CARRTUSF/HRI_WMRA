@@ -12,7 +12,7 @@ if [ $# -eq 0 ]
 		sudo $CONDA_PREFIX/bin/python http_server.py \
 			--cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
 			--wts ./models/e2e_mask_rcnn_R-101-FPN_2x.pkl \
-			--thresh 0.4 \
+			--thresh 0.3 \
 			--cuda $1 \
 			--ip $2 \
 			--port $3

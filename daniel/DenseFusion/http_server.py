@@ -54,7 +54,7 @@ img_width = 480
 img_length = 640
 num_points = 1000
 num_points_mesh = 500
-iteration = 2
+iteration = 3
 bs = 1
 
 # import _init_paths
@@ -201,7 +201,9 @@ def upload_file():
 	# returns [vis.png, bbList, labelList, scoreList, maskList]
 	retList = upload(url, im)
 	if not retList:
-		return None
+		print('No objects found')
+		return '500 Internal Server Error'
+	# print(retList)
 
 	# Starts shit
 	_, bbList, labelList, scoreList, maskList = retList

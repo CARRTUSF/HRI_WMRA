@@ -1317,7 +1317,9 @@ def quaternion_from_matrix(matrix, isprecise=False):
     True
 
     """
+
     M = numpy.array(matrix, dtype=numpy.float64, copy=False)[:4, :4]
+    # print(M)
     if isprecise:
         q = numpy.empty((4, ))
         t = numpy.trace(M)

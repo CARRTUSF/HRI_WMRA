@@ -39,9 +39,10 @@ def convert_rviz(input_str):
 
 	new_str = ''
 	for line in lineList:
-		label, score, bbxmin, bbymin, bbxmax, bbymax, w, q1, q2, q3, x, y, z = line.split(',')
+		label, score, bbxmin, bbymin, bbxmax, bbymax, w, qx, qy, qz, x, y, z = line.split(',')
 		x, y, z = float(x) * -1.0, float(y) * -1.0, float(z)
-		nl = f'rosrun tf static_transform_publisher {z} {x} {y} {q1} {q2} {q3} {w} /camera_link /{label} 60\n'
+		label = label.replace(' ', '_')
+		nl = f'rosrun tf static_transform_publisher {z} {x} {y} {w} {qx} {qy} {qz} /camera_link /{label} 60\n'
 		new_str += nl
 
 	return new_str
@@ -141,7 +142,7 @@ def main():
 		depth_frame_filter = threshold_filter.process(depth_frame_filter)
 		depth_frame_filter = spatial_filter.process(depth_frame_filter)
 		depth_frame_filter = temporal_filter.process(depth_frame_filter)
-		# depth_frame_filter = hole_filling_filter.process(depth_frame_filter)
+		depth_frame_filter = hole_filling_filter.process(depth_frame_filter)
 
 		# Gets imgs
 		color_img = np.asanyarray(color_frame.get_data())
@@ -151,7 +152,8 @@ def main():
 
 		# Runs inference
 		ret_str = upload(url, color_img, depth_img_filter, [cam_scale, cam_cx, cam_cy, cam_fx, cam_fy])
-		if not ret_str:
+		if '500 Internal Server Error' in ret_str:
+			print(f'Response: {ret_str}', end='')
 			continue
 		print(f'Response: {ret_str}', end='')
 
