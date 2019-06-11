@@ -23,15 +23,19 @@ def upload(url, color, depth, intr):
 	# Post and get response
 	try:
 		response = requests.post(url, data=rgbd_json, headers=headers)
+		
 		if response.text:
 			# Decode response and return it
-			ret_str = response.text
+			retList = jsonpickle.decode(response.text)
+			ret_str = retList[0]
+			ret_vis = cv2.imdecode(retList[1], cv2.IMREAD_COLOR)
 			
 			# Returns label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4
-			return ret_str
+			return [ret_str, ret_vis]
 		else:
 			return None
-	except:
+	except Exception as e:
+		print(e)
 		return None
 
 def convert_rviz(input_str):
@@ -151,7 +155,7 @@ def main():
 		# print(depth_img.shape, depth_img_filter.shape)
 
 		# Runs inference
-		ret_str = upload(url, color_img, depth_img_filter, [cam_scale, cam_cx, cam_cy, cam_fx, cam_fy])
+		ret_str, ret_vis = upload(url, color_img, depth_img_filter, [cam_scale, cam_cx, cam_cy, cam_fx, cam_fy])
 		if '500 Internal Server Error' in ret_str:
 			print(f'Response: {ret_str}', end='')
 			continue
@@ -177,6 +181,7 @@ def main():
 		# Sets up filenames
 		outpath_color = os.path.join(outdir, f'{str(count).zfill(num_len)}_color.png')
 		outpath_depth = os.path.join(outdir, f'{str(count).zfill(num_len)}_depth.png')
+		outpath_vis = os.path.join(outdir, f'{str(count).zfill(num_len)}_vis.png')
 		outpath_pc = os.path.join(outdir, f'{str(count).zfill(num_len)}_pc.ply')
 		outpath_pca = os.path.join(outdir, f'{str(count).zfill(num_len)}_pc_aligned.ply')
 		outpath_depth_filter = os.path.join(outdir, f'{str(count).zfill(num_len)}_depth_filter.png')
@@ -199,6 +204,9 @@ def main():
 		pc.map_to(color_frame)
 		points = pc.calculate(depth_frame)
 		points.export_to_ply(outpath_pca, color_frame)
+
+		# Writes detectron vis
+		cv2.imwrite(outpath_vis, ret_vis)
 
 		# Writes inference csv
 		# CSV Format label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4

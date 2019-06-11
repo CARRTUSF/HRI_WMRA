@@ -206,7 +206,7 @@ def upload_file():
 	# print(retList)
 
 	# Starts shit
-	_, bbList, labelList, scoreList, maskList = retList
+	img_vis, bbList, labelList, scoreList, maskList = retList
 	img = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
 	depth = imd
 	# print('depth:\n', depth[len(depth)/2-10:len(depth)/2+10, len(depth[0])/2-10:len(depth[0])/2+10])
@@ -351,15 +351,16 @@ def upload_file():
 	# print(my_result)
 
 	# Creates return csv
-	retStr = createCSV(bbList, labelList, scoreList, my_result)
-
+	ret_str = createCSV(bbList, labelList, scoreList, my_result)
+	retList = [ret_str, cv2.imencode('.png', img_vis)[1]]
+	retList_encoded = jsonpickle.encode(retList)
 	# Write cloud files
 	# if not os.path.exists('test_imgs'):
 	# 	os.makedirs('test_imgs')
 	# for cloud in cloudList:
 
-	
-	return retStr
+	return flask.Response(response=retList_encoded, status=200, mimetype='application/json')
+	# return retList_encoded
 
 def main():
 	# Globals
