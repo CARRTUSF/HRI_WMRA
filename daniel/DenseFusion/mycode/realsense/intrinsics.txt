@@ -1,0 +1,4 @@
+Intel RealSense D435
+Depth Scale: 0.0010000000474974513
+Color: width: 640, height: 480, ppx: 327.69, ppy: 242.552, fx: 618.2, fy: 618.74, model: Brown Conrady, coeffs: [0, 0, 0, 0, 0]
+Depth: width: 640, height: 480, ppx: 318.557, ppy: 243.841, fx: 385.567, fy: 385.567, model: Brown Conrady, coeffs: [0, 0, 0, 0, 0]

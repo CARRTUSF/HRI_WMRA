@@ -1,0 +1,4 @@
+Depth Scale: 0.0010000000474974513
+Color: width: 848, height: 480, ppx: 431.69, ppy: 242.552, fx: 618.2, fy: 618.74, model: Brown Conrady, coeffs: [0, 0, 0, 0, 0]
+Depth: width: 848, height: 480, ppx: 422.407, ppy: 244.241, fx: 425.73, fy: 425.73, model: Brown Conrady, coeffs: [0, 0, 0, 0, 0]
+
