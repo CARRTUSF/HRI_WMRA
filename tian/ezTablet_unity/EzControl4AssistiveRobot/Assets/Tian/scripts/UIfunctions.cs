@@ -139,6 +139,7 @@ public class UIfunctions : MonoBehaviour
         gripper1.SetActive(false);
         default_grasp_UI.SetActive(false);
         is_user_menu_open = false;
+        user_menu.SetActive(false);
         feedback_menu.SetActive(false);
     }
 
@@ -182,6 +183,7 @@ public class UIfunctions : MonoBehaviour
             gripper1.SetActive(true);
             gripper2.SetActive(true);
             HighLightGripper("none");
+            is_user_menu_open = false;
             user_menu.SetActive(false);
             default_grasp_UI.SetActive(true);
             default_grasp_UI.transform.Find("btnApply2").gameObject.SetActive(false);

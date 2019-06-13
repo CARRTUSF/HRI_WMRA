@@ -1326,6 +1326,10 @@ Prefab:
       propertyPath: m_Name
       value: Gripper3
       objectReference: {fileID: 0}
+    - target: {fileID: 1872738625382614, guid: 8afe058ffc9875c468ec963bb412d3a3, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8afe058ffc9875c468ec963bb412d3a3, type: 2}
   m_IsPrefabAsset: 0

@@ -1,0 +1,100 @@
+import cv2
+import numpy as np
+import os
+from matplotlib import pyplot as plt
+
+
+def hilditch_skeletonization(pixels, mask_img):
+    no_pixel_change = False
+    skeleton = pixels
+    img = mask_img.copy()
+    while not no_pixel_change:
+        print(len(skeleton))
+        no_pixel_change = True
+        new_pixels = []
+        for pixel in skeleton:
+            if condition1(pixel, img) and condition2(pixel, img) and condition3(pixel, img) and condition4(pixel, img):
+                img[pixel[0], pixel[1]] = 0
+                no_pixel_change = False
+            else:
+                new_pixels.append(pixel)
+        skeleton = new_pixels
+    skeleton = np.array(skeleton)
+    return skeleton
+
+
+def condition1(pixel, img):
+    neighbors = img[pixel[0] - 1:pixel[0] + 2, pixel[1] - 1:pixel[1] + 2]
+    r1 = np.ones((1, 3))
+    c1 = np.ones((3, 1))
+    a = np.matmul(r1, neighbors)
+    b = np.matmul(a, c1)
+    if 1 < b[0] < 7:
+        return True
+    else:
+        return False
+
+
+def condition2(pixel, img):
+    r = pixel[0]
+    c = pixel[1]
+    a = 0
+    sq_neighbors = [img[r - 1, c], img[r - 1, c + 1], img[r, c + 1], img[r + 1, c + 1], img[r + 1, c],
+                    img[r + 1, c - 1], img[r, c - 1], img[r - 1, c - 1], img[r - 1, c]]
+    for i in range(8):
+        if sq_neighbors[i] == 0 and sq_neighbors[i + 1] == 1:
+            a += 1
+    if a == 1:
+        return True
+    else:
+        return False
+
+
+def condition3(pixel, img):
+    r = pixel[0]
+    c = pixel[1]
+    if img[r - 1, c] == 0 and img[r, c + 1] == 0 and img[r, c - 1] == 0:
+        return True
+    if condition2([r - 1, c], img):
+        return True
+    else:
+        return False
+
+
+def condition4(pixel, img):
+    r = pixel[0]
+    c = pixel[1]
+    if img[r - 1, c] == 0 and img[r, c + 1] == 0 and img[r + 1, c] == 0:
+        return True
+    if condition2([r, c + 1], img):
+        return True
+    else:
+        return False
+
+
+if __name__ == '__main__':
+    path = os.path.dirname(os.getcwd())
+    mask_image_name = 'spray1_mask.png'
+    image_name = 'spray1.png'
+    mask_img = cv2.imread(os.path.join(path, 'pictures', mask_image_name))
+    imgb = cv2.imread(os.path.join(path, 'pictures', image_name))
+    mask_pixels = []
+    roi = mask_img[250:500, 450:750, 0]
+    r, c = roi.shape
+    for i in range(r):
+        for j in range(c):
+            if roi[i, j] == 1:
+                mask_pixels.append([i+250, j+450])
+    print("mask_pixels", len(mask_pixels))
+    mask_skeleton = hilditch_skeletonization(mask_pixels, mask_img[:, :, 0])
+    print(mask_skeleton.shape)
+
+    x = mask_skeleton[:, 1]
+    y = mask_skeleton[:, 0]
+    plt.figure()
+    plt.scatter(x, y, color='r')
+    plt.imshow(imgb)
+
+    plt.figure()
+    plt.imshow(roi)
+    plt.show()

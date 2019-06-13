@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Tian/Scenes/start.unity
     guid: 875fb337c2bbac24cb3a4dd8a06f52c5
   - enabled: 1

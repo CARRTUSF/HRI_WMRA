@@ -1,12 +1,83 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import os
 from visulize_trajectory import save_path_image, save_loss_image, get_corners
 from image_processing_visualization import visualize_all
 import time
 from vision4grasp_tuning import find_pixel_normals, get_outline
+
+
+next_pose1 = []
+
+
+def neighbours(x, y, img):
+    x_1, y_1, x1, y1 = x - 1, y - 1, x + 1, y + 1
+    return [img[x_1, y], img[x_1, y1], img[x, y1], img[x1, y1],  # P2,P3,P4,P5
+            img[x1, y], img[x1, y_1], img[x, y_1], img[x_1, y_1]]  # P6,P7,P8,P9
+
+
+def transitions(sk_neighbours):
+    n = sk_neighbours + sk_neighbours[0:1]  # P2, P3, ... , P8, P9, P2
+    return sum((n1, n2) == (0, 1) for n1, n2 in zip(n, n[1:]))  # (P2,P3), (P3,P4), ... , (P8,P9), (P9,P2)
+
+
+def zhangsuen(mask_pixels, image):
+    image_thinned = image.copy()  # deepcopy to protect the original image
+    changing1 = changing2 = 1  # the points to be removed (set as 0)
+    skeleton_pixels = mask_pixels.copy()
+    while changing1 or changing2:  # iterates until no further changes occur in the image
+        new_pixels = []
+        # Step 1
+        changing1 = []
+        # rows, columns = image_thinned.shape  # x for rows, y for columns
+        # for x in range(1, rows - 1):  # No. of  rows
+        #     for y in range(1, columns - 1):  # No. of columns
+        for pixel in skeleton_pixels:
+            x = pixel[0]
+            y = pixel[1]
+            P2, P3, P4, P5, P6, P7, P8, P9 = n = neighbours(x, y, image_thinned)
+            if (image_thinned[x, y] == 1 and  # Condition 0: Point P1 in the object regions
+                    2 <= sum(n) <= 6 and  # Condition 1: 2<= N(P1) <= 6
+                    transitions(n) == 1 and  # Condition 2: S(P1)=1
+                    P2 * P4 * P6 == 0 and  # Condition 3
+                    P4 * P6 * P8 == 0):  # Condition 4
+                changing1.append((x, y))
+            else:
+                new_pixels.append([x, y])
+        for x, y in changing1:
+            image_thinned[x, y] = 0
+        skeleton_pixels = new_pixels.copy()
+        new_pixels = []
+        # Step 2
+        changing2 = []
+        # for x in range(1, rows - 1):
+        #     for y in range(1, columns - 1):
+        for pixel in skeleton_pixels:
+            x = pixel[0]
+            y = pixel[1]
+            P2, P3, P4, P5, P6, P7, P8, P9 = n = neighbours(x, y, image_thinned)
+            if (image_thinned[x, y] == 1 and  # Condition 0
+                    2 <= sum(n) <= 6 and  # Condition 1
+                    transitions(n) == 1 and  # Condition 2
+                    P2 * P4 * P8 == 0 and  # Condition 3
+                    P2 * P6 * P8 == 0):  # Condition 4
+                changing2.append((x, y))
+            else:
+                new_pixels.append([x, y])
+        for x, y in changing2:
+            image_thinned[x, y] = 0
+        skeleton_pixels = new_pixels.copy()
+    return skeleton_pixels      # image_thinned
+
+
+def current_pos2skeleton_points_distance(current_pos, sk_points):
+    distances = []
+    for i in range(len(sk_points)):
+        distance = ((sk_points[i][0]-current_pos[0])**2 + (sk_points[i][1]-current_pos[1])**2)**0.5
+        distances.append([i, distance])
+    distances = sorted(distances, key=lambda l:l[1])
+    return distances
 
 
 def get_outline_normal(mask, outline_image, r_crop, c_crop, window_size):
@@ -112,6 +183,14 @@ def normal_end(outline_pixels, normals):
 
 
 def find_contact_region(outline_pixels, index_array, center, theta):
+    """
+
+    :param outline_pixels:
+    :param index_array:
+    :param center: [row,col]
+    :param theta:
+    :return:
+    """
     grasp_path_corners = get_corners(center, theta, 19, 130)
     r_1 = int(round(np.amax(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
     r_2 = int(round(np.amin(grasp_path_corners[0, :]))) - outline_pixels[0, 0]
@@ -151,18 +230,22 @@ def find_contact_region(outline_pixels, index_array, center, theta):
         for i in range(4):
             if not search_indicator[i]:
                 stopping_row = True
-                p_i = index_array[search_rows[i]]
-                p_a = outline_pixels[p_i[0]: p_i[1]+1]
-                col_avg = np.sum(p_a[:, 1])/len(p_a)
-                for j in range(len(p_a)):
-                    if i < 2:
-                        if p_a[j, 1] - col_avg < 0 and inside_grasp_path(center, theta, p_a[j]):
-                            stopping_row = False
-                            contact_region = np.append(contact_region, [[p_i[0]+j, 0]], axis=0)
-                    else:
-                        if p_a[j, 1] - col_avg > 0 and inside_grasp_path(center, theta, p_a[j]):
-                            stopping_row = False
-                            contact_region = np.append(contact_region, [[p_i[0]+j, 1]], axis=0)
+                if search_rows[i]>len(index_array)-1 or search_rows[i]<0:
+                    pass
+                    #print(search_rows[i])
+                else:
+                    p_i = index_array[search_rows[i]]
+                    p_a = outline_pixels[p_i[0]: p_i[1]+1]
+                    col_avg = np.sum(p_a[:, 1])/len(p_a)
+                    for j in range(len(p_a)):
+                        if i < 2:
+                            if p_a[j, 1] - col_avg < 0 and inside_grasp_path(center, theta, p_a[j]):
+                                stopping_row = False
+                                contact_region = np.append(contact_region, [[p_i[0]+j, 0]], axis=0)
+                        else:
+                            if p_a[j, 1] - col_avg > 0 and inside_grasp_path(center, theta, p_a[j]):
+                                stopping_row = False
+                                contact_region = np.append(contact_region, [[p_i[0]+j, 1]], axis=0)
                 if stopping_row:
                     search_indicator[i] = 1
         if search_indicator[0]*search_indicator[1]*search_indicator[2]*search_indicator[3] == 1:
@@ -179,25 +262,6 @@ def inside_grasp_path(center, theta, pixel):
         return True
     else:
         return False
-
-
-def test_index_array(array, r1):
-    current_row = r1
-    ix1=0
-    ix2=0
-    current_index = -1
-    index_array = []
-    for item in array:
-        current_index += 1
-        if item[0] == current_row:
-            ix2 = current_index
-        else:
-            index_array.append([ix1, ix2])
-            ix1 = current_index
-            ix2 = current_index
-            current_row = item[0]
-    index_array.append([ix1, ix2])
-    return index_array
 
 
 def total_loss(contact_region, outline_pixels, normals, gripper_center, theta):    # gripper_center(row,col)
@@ -247,49 +311,55 @@ def total_loss(contact_region, outline_pixels, normals, gripper_center, theta): 
         return -1, -1, -1
 
 
-def find_next_gripper_pose(outline_pixels, index_array, normals, current_pos):
-    r = 10
+def find_next_gripper_pose(outline_pixels, index_array, normals, current_pos, angle_search_space):
+    r = 8
     threshold = 0.1
     min_loss = current_pos[3]
     next_pos = current_pos
-    for i in range(50):
+    for i in range(20):
         ri = r * np.sqrt(np.random.random())
         phi = np.random.random() * 2 * np.pi
-        next_x = current_pos[0] + ri * np.cos(phi)
-        next_y = current_pos[1] + ri * np.sin(phi)
-        for k in range(30):
-            # s_time = time.time()
-            if k < 2:
-                next_theta = current_pos[2] * k
+        next_row = current_pos[0] + ri * np.cos(phi)
+        next_col = current_pos[1] + ri * np.sin(phi)
+        for k in range(len(angle_search_space)):
+            if k < 8:
+                next_theta = angle_search_space[k] + current_pos[2]
             else:
-                d_theta = 90 * np.random.random() - 45
-                next_theta = current_pos[2] + d_theta
+                next_theta = angle_search_space[k]
             # start_time = time.time()
-            next_contact = find_contact_region(outline_pixels, index_array, [next_y, next_x], next_theta)
+            next_contact = find_contact_region(outline_pixels, index_array, [next_row, next_col], next_theta)
             # print("get contact region used", time.time()-start_time, "seconds")
             # start_time = time.time()
-            x_loss, y_loss, theta_loss = total_loss(next_contact, outline_pixels, normals, [next_y, next_x], next_theta)
+            x_loss, y_loss, theta_loss = total_loss(next_contact, outline_pixels, normals, [next_row, next_col], next_theta)
             loss = x_loss + y_loss + theta_loss
             # print("find current loss used", time.time()-start_time, "seconds")
             if loss != -3 and min_loss - loss > threshold:
                 min_loss = loss
-                next_pos = [next_x, next_y, next_theta, loss, x_loss, y_loss, theta_loss]
+                next_pos = [next_row, next_col, next_theta, loss, x_loss, y_loss, theta_loss]
             # print("one search used", time.time()-s_time, "seconds")
     return next_pos
 
 
-def find_gripper_trajectory(outline_pixels, index_array, normals, current_pos):
+def find_gripper_trajectory(outline_pixels, index_array, normals, mask_skeleton, current_pos):
     iterations = 0
+    distance_array = current_pos2skeleton_points_distance(current_pos[0:2], mask_skeleton)
+    closest_skp = [mask_skeleton[distance_array[0][0]][0], mask_skeleton[distance_array[0][0]][1]]
     if current_pos[3] == -1:
-        current_contact = find_contact_region(outline_pixels, index_array, [current_pos[1], current_pos[0]], current_pos[2])
-        l1, l2, l3 = total_loss(current_contact, outline_pixels, normals, [current_pos[1], current_pos[0]], current_pos[2])
+        current_pos[0] = closest_skp[0]
+        current_pos[1] = closest_skp[1]
+        current_contact = find_contact_region(outline_pixels, index_array, [current_pos[0], current_pos[1]], current_pos[2])
+        l1, l2, l3 = total_loss(current_contact, outline_pixels, normals, [current_pos[0], current_pos[1]], current_pos[2])
         current_loss = l1 + l2 + l3
         current_pos[3:7] = [current_loss, l1, l2, l3]
     trajectory = [current_pos]
+    # angle_search_space = np.arange(-90, 96, 6)
+    # angle_search_space = np.append([-5, -4, -3, -2, -1, 1, 2, 3, 4, 5], angle_search_space)
+    angle_search_space = np.arange(-30, 30, 5)
+    angle_search_space = np.append([-4, -3, -2, -1, 1, 2, 3, 4], angle_search_space)
     while iterations < 20:
         start_time = time.time()
         iterations += 1
-        next_pos = find_next_gripper_pose(outline_pixels, index_array, normals, current_pos)
+        next_pos = find_next_gripper_pose(outline_pixels, index_array, normals, current_pos,angle_search_space)
         if current_pos == next_pos:
             break
         else:
@@ -302,7 +372,7 @@ def find_gripper_trajectory(outline_pixels, index_array, normals, current_pos):
 
 def test1():
     path = os.path.dirname(os.getcwd())
-    mask_image_name = 'tennis_mask.png'
+    mask_image_name = 'spoon3_mask.png'
     image_name = 'spoon3.png'
     mask_img = cv2.imread(os.path.join(path, 'pictures', mask_image_name))
     print(mask_img.shape)
@@ -322,7 +392,8 @@ def test1():
     outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(roi, 150, 540, 7)
 
     start_time3 = time.time()
-    grasp_path_corners, contact_seeds, contact_region = find_contact_region(outline_pixels_v3, index_array, [320, 651], 10)
+    #grasp_path_corners, contact_seeds, \
+    contact_region = find_contact_region(outline_pixels_v3, index_array, [320, 651], 10)
     time3 = time.time() - start_time3
 
     #print("v1 outline and normal extraction used", time1, "seconds")
@@ -340,12 +411,12 @@ def test1():
     print(outline_pixels_v3[0], outline_pixels_v3[-1])
 
 
-    print(grasp_path_corners)
-    print('contact seeds', contact_seeds)
+    #print(grasp_path_corners)
+    #print('contact seeds', contact_seeds)
     print('r1', outline_pixels_v3[0, 0])
     print('contact region size', contact_region.shape)
-    x = np.array([[grasp_path_corners[1, 0], grasp_path_corners[1, 1]], [grasp_path_corners[1, 0], grasp_path_corners[1, 2]], [grasp_path_corners[1, 3], grasp_path_corners[1, 1]], [grasp_path_corners[1, 3], grasp_path_corners[1, 2]]])
-    y = np.array([[grasp_path_corners[0, 0], grasp_path_corners[0, 1]], [grasp_path_corners[0, 0], grasp_path_corners[0, 2]], [grasp_path_corners[0, 3], grasp_path_corners[0, 1]], [grasp_path_corners[0, 3], grasp_path_corners[0, 2]]])
+    #x = np.array([[grasp_path_corners[1, 0], grasp_path_corners[1, 1]], [grasp_path_corners[1, 0], grasp_path_corners[1, 2]], [grasp_path_corners[1, 3], grasp_path_corners[1, 1]], [grasp_path_corners[1, 3], grasp_path_corners[1, 2]]])
+    #y = np.array([[grasp_path_corners[0, 0], grasp_path_corners[0, 1]], [grasp_path_corners[0, 0], grasp_path_corners[0, 2]], [grasp_path_corners[0, 3], grasp_path_corners[0, 1]], [grasp_path_corners[0, 3], grasp_path_corners[0, 2]]])
 
     # print(canny_outline_pixels.shape)
 
@@ -379,8 +450,8 @@ def test1():
     plt.figure(5)
     plt.title('contact region test')
     plt.imshow(mask_img*255)
-    for i in range(4):
-        plt.plot(x[i], y[i], color='g')
+    # for i in range(4):
+    #     plt.plot(x[i], y[i], color='g')
     plt.scatter(651, 320, color='r')
     for pixel in contact_region:
         if pixel[1] == 0:
@@ -392,18 +463,10 @@ def test1():
 
     plt.show()
 
-    plt.show()
-
-
-def test2():
-    array = np.array([[23,34],[23,40],[23,50],[23,51],[24,4],[24,14],[24,24],[25,5],[25,15],[25,25],[26,26]])
-    index_array = test_index_array(array,23)
-    print(index_array)
-
 
 def main():
     path = os.path.dirname(os.getcwd())
-    mask_image_name = 'tennis_mask.png'
+    mask_image_name = 'spoon3_mask.png'
     image_name = 'spoon3.png'
     mask_img = cv2.imread(os.path.join(path, 'pictures', mask_image_name))
     print(mask_img.shape)
@@ -412,13 +475,33 @@ def main():
     roi = mask_img[r_crop:570, c_crop:740, 0]
     #outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(mask_img[:, :, 0], 0, 0, 7)
     outline_pixels_v3, outline_normals_v3, index_array = get_outline_and_normal(roi, r_crop, c_crop, 7)
+    # calculate the object skeleton///////////////
+    mask_pixels = []
+    r, c = roi.shape
+    for i in range(r):
+        for j in range(c):
+            if roi[i, j] == 1:
+                mask_pixels.append([i + 150, j + 540])
+    object_skeleton = zhangsuen(mask_pixels, mask_img[:, :, 0])
+    object_skeleton = np.array(object_skeleton)
+    plt.figure()
+    plt.imshow(mask_img*255)
+    x = object_skeleton[:, 1]
+    y = object_skeleton[:, 0]
+    plt.scatter(x, y, color='r', marker='x')
+    plt.show()
+    # ----------------------------///////////////
     start_time3 = time.time()
-    trajectory = find_gripper_trajectory(outline_pixels_v3, index_array, outline_normals_v3, [659, 314, 0, -1, -1, -1, -1])
+    trajectory = find_gripper_trajectory(outline_pixels_v3, index_array, outline_normals_v3, object_skeleton, [314, 659, 0, -1, -1, -1, -1])
     time3 = time.time() - start_time3
     print('find trajectory used', time3, 'seconds')
     print(trajectory)
 
+    img2 = cv2.imread(os.path.join(path, 'pictures', image_name))
+    save_path_image(trajectory, img2, r'D:\Temp')
+
 
 if __name__ == '__main__':
-    #test1()
+    # test1()
     main()
+    # uniform_random_points(50, 12)

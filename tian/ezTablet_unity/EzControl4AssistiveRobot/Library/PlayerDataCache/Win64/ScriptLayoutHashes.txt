@@ -1,8 +1,7 @@
 WindowsStandalone
 PlayerPath?
-C:/Users/75077/OneDrive/UNITY/TECB_v1955/EzControl4AssistiveRobot.exe
+C:/Users/75077/OneDrive/UNITY/v529/EzControl4AssistiveRobot.exe
 SceneListBegin?
-Assets/Tian/Scenes/start.unity
 Assets/Tian/Scenes/main.unity
 SceneListEnd?
 08102b0b851d86962e258061e62cf5a9 Assembly-CSharp.dll:RosSharp.RosBridgeClient.JointStatePatcher

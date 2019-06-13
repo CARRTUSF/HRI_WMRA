@@ -5,12 +5,32 @@ from matplotlib import pyplot as plt
 
 
 def get_corners(center, theta, h, w):
+    """
+
+    :param center:
+    :param theta:
+    :param h:
+    :param w:
+    :return: [
+    """
     theta = np.deg2rad(theta)
-    corner_vectors_original = np.array([[-h, h, -h, h], [-w, -w, w, w], [1, 1, 1, 1]])
+    corner_vectors_original = np.array([[-h, h, h, -h], [-w, -w, w, w], [1, 1, 1, 1]])
     transformation = np.array(
         [[np.cos(theta), np.sin(theta), center[0]], [-np.sin(theta), np.cos(theta), center[1]], [0, 0, 1]])
     new_corners = np.matmul(transformation, corner_vectors_original)
     return new_corners
+
+
+def plot_grasp_path(center, theta, h, w, img):
+    new_corners = get_corners(center, theta, h, w)
+    for k in range(4):
+        if k != 3:
+            cv2.line(img, (int(round(new_corners[1][k])), int(round(new_corners[0][k]))),
+                     (int(round(new_corners[1][k + 1])), int(round(new_corners[0][k + 1]))), (0, 0, 255))
+        else:
+            cv2.line(img, (int(round(new_corners[1][3])), int(round(new_corners[0][3]))),
+                     (int(round(new_corners[1][0])), int(round(new_corners[0][0]))), (0, 0, 255))
+    cv2.circle(img, (center[1], center[0]), 3, (0, 255, 0), -1)
 
 
 def find_new_corner_vectors(corner_vectors, angle):
@@ -33,7 +53,7 @@ def save_path_image(trajectory, img, path):
         img_copy = np.copy(img)
         if i != 0:
             new_corner_vectors = find_new_corner_vectors(corner_vectors, trajectory[i][2])
-        center = [int(round(trajectory[i][0])), int(round(trajectory[i][1]))]
+        center = [int(round(trajectory[i][1])), int(round(trajectory[i][0]))]
         new_corners = new_corner_vectors + np.array([center, center, center, center])
         for k in range(4):
             if k != 3:

@@ -2,7 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32332548-ae0a-4cf8-a994-89d69578d052" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/grasp_feature_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hilditch_skeletonization" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/zhangsuen_thinning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vgt2.py" beforeDir="false" afterPath="$PROJECT_DIR$/vgt2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visulize_trajectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/visulize_trajectory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp-Editor.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp-Editor.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/scripts/UIfunctions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/scripts/UIfunctions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/EditorUserBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/EditorUserBuildSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/LastBuild.buildreport" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/LastBuild.buildreport" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/Managed/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/Managed/Assembly-CSharp.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/globalgamemanagers" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/globalgamemanagers" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/level0" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/level0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/level1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/level1.resS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets0.assets" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets0.assets" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets0.assets.resS" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets0.assets.resS" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets1.assets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/Data/sharedassets1.assets.resS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/ScriptLayoutHashes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/PlayerDataCache/Win64/ScriptLayoutHashes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll.mdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/bf/bf35f6eec2ad5da409f0d408e337af81" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/bf/bf35f6eec2ad5da409f0d408e337af81" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe1.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe1.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe10.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe10.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe11.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe11.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe2.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe2.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe3.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe3.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe4.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe4.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe5.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe5.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe6.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe6.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe7.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe7.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe8.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe8.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe9.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe9.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,17 +60,30 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="code" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vgt2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1814">
-              <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
+            <state relative-caret-position="1">
+              <caret line="462" lean-forward="true" selection-start-line="462" selection-end-line="462" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#10016#13987#0" />
-                <element signature="e#14007#14180#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/zhangsuen_thinning.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="407">
+              <caret line="89" selection-start-line="89" selection-end-line="89" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -29,7 +92,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="407">
+              <caret line="71" column="46" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -38,10 +102,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
+        <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="578" column="19" selection-start-line="578" selection-start-column="4" selection-end-line="578" selection-end-column="19" />
+            <state relative-caret-position="407">
+              <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -50,25 +114,50 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
+        <entry file="file://$PROJECT_DIR$/grasp_feature_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="66" column="41" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
+            <state relative-caret-position="130">
+              <caret line="190" column="38" selection-start-line="190" selection-start-column="38" selection-end-line="190" selection-end-column="38" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/grasp_feature_study.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>empty_row</find>
+      <find>I</find>
+      <find>display_img</find>
     </findStrings>
     <replaceStrings>
       <replace>stopping_row</replace>
+      <replace>image_thinned</replace>
+      <replace>center_id</replace>
+      <replace>obj_pt</replace>
+      <replace>grasp_angles</replace>
+      <replace>display_img</replace>
+      <replace>mask_img</replace>
+      <replace>mask_img*255</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -77,20 +166,19 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/visulize_trajectory.py" />
+        <option value="$PROJECT_DIR$/mutithreading_test.py" />
+        <option value="$PROJECT_DIR$/hilditch_skeletonization" />
+        <option value="$PROJECT_DIR$/dump.py" />
+        <option value="$PROJECT_DIR$/zhangsuen_thinning.py" />
         <option value="$PROJECT_DIR$/vgt2.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/dictionaries/Tian.xml" />
+        <option value="$PROJECT_DIR$/visulize_trajectory.py" />
+        <option value="$PROJECT_DIR$/grasp_feature_test.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
-    <option name="width" value="1059" />
+    <option name="x" value="-10" />
+    <option name="width" value="1330" />
     <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -117,6 +205,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -130,7 +219,70 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.vgt2">
+  <component name="RunManager" selected="Python.grasp_feature_test">
+    <configuration name="grasp_feature_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/grasp_feature_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="hilditch_skeletonization" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hilditch_skeletonization" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="mutithreading_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mutithreading_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="vgt2" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -152,7 +304,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="visulize_trajectory" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="zhangsuen_thinning" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -164,7 +316,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/visulize_trajectory.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/zhangsuen_thinning.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -175,8 +327,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.grasp_feature_test" />
         <item itemvalue="Python.vgt2" />
-        <item itemvalue="Python.visulize_trajectory" />
+        <item itemvalue="Python.zhangsuen_thinning" />
+        <item itemvalue="Python.hilditch_skeletonization" />
+        <item itemvalue="Python.mutithreading_test" />
       </list>
     </recent_temporary>
   </component>
@@ -194,23 +349,23 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1066" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.06533193" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49925485" visible="true" weight="0.088507265" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="Favorites" order="2" sideWeight="0.5007452" side_tool="true" weight="0.17031872" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32928178" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49966997" weight="0.27545553" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32914925" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.831572" visible="true" weight="0.31799164" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39335477" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3279743" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3279743" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32475883" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50033003" side_tool="true" weight="0.27673796" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.23258306" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.168428" side_tool="true" visible="true" weight="0.31799164" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.8295905" weight="0.28591353" />
       <window_info anchor="bottom" id="Educational.CheckDetails" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -218,44 +373,101 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/multiprocessing/process.py" />
+    <entry file="file://$PROJECT_DIR$/hilditch_skeletonization">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="272">
+          <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
+    <entry file="file://$PROJECT_DIR$/mutithreading_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="66" column="41" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
+        <state relative-caret-position="79">
+          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="578" column="19" selection-start-line="578" selection-start-column="4" selection-end-line="578" selection-end-column="19" />
+        <state relative-caret-position="226">
+          <caret line="578" column="61" selection-start-line="577" selection-start-column="4" selection-end-line="578" selection-end-column="90" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dump.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3706">
+          <caret line="219" column="22" selection-start-line="219" selection-start-column="22" selection-end-line="219" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/vgt2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1814">
-          <caret line="117" column="42" selection-start-line="117" selection-start-column="42" selection-end-line="117" selection-end-column="42" />
+        <state relative-caret-position="1">
+          <caret line="462" lean-forward="true" selection-start-line="462" selection-end-line="462" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#10016#13987#0" />
-            <element signature="e#14007#14180#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grasp_feature_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="190" column="38" selection-start-line="190" selection-start-column="38" selection-end-line="190" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="71" column="46" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zhangsuen_thinning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="89" selection-start-line="89" selection-end-line="89" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grasp_feature_study.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
