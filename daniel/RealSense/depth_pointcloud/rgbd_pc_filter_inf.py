@@ -23,14 +23,14 @@ def upload(url, color, depth, intr):
 	# Post and get response
 	try:
 		response = requests.post(url, data=rgbd_json, headers=headers)
-		
+
 		if response.text:
 			# Decode response and return it
 			retList = jsonpickle.decode(response.text)
 			ret_str = retList[0]
 			ret_vis = cv2.imdecode(retList[1], cv2.IMREAD_COLOR)
 			
-			# Returns label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4
+			# ret_str = label, score, bbxmin, bbymin, bbxmax, bbymax, w, qx, qy, qz, x, y, z
 			return [ret_str, ret_vis]
 		else:
 			return None
@@ -146,7 +146,7 @@ def main():
 		depth_frame_filter = threshold_filter.process(depth_frame_filter)
 		depth_frame_filter = spatial_filter.process(depth_frame_filter)
 		depth_frame_filter = temporal_filter.process(depth_frame_filter)
-		depth_frame_filter = hole_filling_filter.process(depth_frame_filter)
+		# depth_frame_filter = hole_filling_filter.process(depth_frame_filter)
 
 		# Gets imgs
 		color_img = np.asanyarray(color_frame.get_data())
@@ -211,7 +211,7 @@ def main():
 		# Writes inference csv
 		# CSV Format label, score, bbxmin, bbymin, bbxmax, bbymax, xcenter, ycenter, zcenter, q1, q2, q3, q4
 		with open(outpath_csv, 'w') as of:
-			titles = f'label,score,bbxmin,bbymin,bbxmax,bbymax,w,q1,q2,q3,xcenter,ycenter,zcenter,\n'
+			titles = f'label, score, bbxmin, bbymin, bbxmax, bbymax, w, qx, qy, qz, x, y, z,\n'
 			of.write(titles + ret_str)
 
 		# Writes rviz stuff
