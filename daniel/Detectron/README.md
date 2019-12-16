@@ -1,6 +1,7 @@
 # HTTP Server Setup
 ## Download & Setup Conda Environment
-```
+
+```bash
 # Clone repo and enter directory
 git clone https://github.com/CARRTUSF/HRI_WMRA.git
 cd HRI_WMRA/daniel/Detectron
@@ -11,10 +12,10 @@ wget https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mas
 # Create conda environment with everything needed to run inference
 conda create -n detectron python=3.6 -y
 conda activate detectron
+pip install numpy
 conda install -c pytorch pytorch -y
 conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask requests numpy pycocotools pillow torchvision -y
 conda install -c menpo  opencv -y
-conda install numpy -y
 pip install opencv-contrib-python pyrealsense2 jsonpickle
 
 # Build Detectron libs
