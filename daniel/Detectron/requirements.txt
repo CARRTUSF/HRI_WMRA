@@ -9,3 +9,10 @@ scipy
 six
 future
 protobuf
+opencv-contrib-python
+pyrealsense2
+jsonpickle
+requests
+flask
+pillow
+torchvision

@@ -10,12 +10,10 @@ cd HRI_WMRA/daniel/Detectron
 wget https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl -O models/e2e_mask_rcnn_R-101-FPN_2x.pkl
 
 # Create conda environment with everything needed to run inference
-conda create -n detectron python=3.6 -y
+conda create -n detectron python=3.6 pytorch -y
 conda activate detectron
-pip install numpy
-conda install -c pytorch pytorch -y
 conda install -c conda-forge pyyaml=3.12 matplotlib cython mock scipy six future protobuf flask requests numpy pycocotools pillow torchvision -y
-conda install -c menpo  opencv -y
+# conda install -c menpo  opencv -y
 pip install opencv-contrib-python pyrealsense2 jsonpickle
 
 # Build Detectron libs
