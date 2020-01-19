@@ -2,10 +2,64 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32332548-ae0a-4cf8-a994-89d69578d052" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../.idea/Grasp_tuning.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/better_grasp_ranking.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/centering_feature_study.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contact_angle_feature_study.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cornell_grasp_quality_debug.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluate_cornell_grasps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extract_center_point_cornell.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/file_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fun.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_feature_data_collection_manual.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_feature_data_generation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_feature_study.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasp_quality_study.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/grasps_ranking.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/old_version_functions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/opencv_mouse.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/refine_nndetection_cornell.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test_score_combine_v2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/torque_feature_study.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vgt3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grasp_feature_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_feature_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vgt2.py" beforeDir="false" afterPath="$PROJECT_DIR$/vgt2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visulize_trajectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/visulize_trajectory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/box.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/box.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/spoon1.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spoon1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/spoon3.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spoon3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/spray.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/spray1.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spray1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/tennis.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/tennis.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pictures/wbt.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/wbt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/testTouch2Place.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/testTouch2Place.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02.info" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,79 +68,6 @@
   <component name="FavoritesManager">
     <favorites_list name="code" />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/vgt2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="628">
-              <caret line="256" column="17" lean-forward="true" selection-start-line="256" selection-start-column="17" selection-end-line="256" selection-end-column="17" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/zhangsuen_thinning.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1462">
-              <caret line="89" selection-start-line="89" selection-end-line="89" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1190">
-              <caret line="71" column="46" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grasp_feature_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="77" column="35" lean-forward="true" selection-start-line="77" selection-start-column="35" selection-end-line="77" selection-end-column="35" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grasp_feature_study.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -94,84 +75,33 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>empty_row</find>
-      <find>I</find>
-      <find>display_img</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>stopping_row</replace>
-      <replace>image_thinned</replace>
-      <replace>center_id</replace>
-      <replace>obj_pt</replace>
-      <replace>grasp_angles</replace>
-      <replace>display_img</replace>
-      <replace>mask_img</replace>
-      <replace>mask_img*255</replace>
-    </replaceStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+    <option name="UPDATE_TYPE" value="MERGE" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/mutithreading_test.py" />
-        <option value="$PROJECT_DIR$/hilditch_skeletonization" />
-        <option value="$PROJECT_DIR$/dump.py" />
-        <option value="$PROJECT_DIR$/zhangsuen_thinning.py" />
-        <option value="$PROJECT_DIR$/visulize_trajectory.py" />
-        <option value="$PROJECT_DIR$/grasp_feature_test.py" />
-        <option value="$PROJECT_DIR$/vgt2.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-10" />
-    <option name="width" value="1330" />
-    <option name="height" value="1050" />
-  </component>
+  <component name="ProjectId" id="1S4Exrq5r1xvHBlfMGtLcPwHIlg" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="code" type="b2602c69:ProjectViewProjectNode" />
-              <item name="code" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-      <pane id="Course" />
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Anaconda3/envs/grasp_evaluation/python.exe" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\75077\OneDrive\M3X\HRI_WMRA\tian\Grasp_tuning\code" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\75077\OneDrive\M3X\HRI_WMRA\tian\Grasp_tuning\" />
+    </key>
   </component>
-  <component name="RunManager" selected="Python.grasp_feature_test">
-    <configuration name="grasp_feature_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.grasp_quality_study">
+    <configuration name="evaluate_cornell_grasps" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -183,7 +113,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/grasp_feature_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/evaluate_cornell_grasps.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -192,7 +122,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="hilditch_skeletonization" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="grasp_quality_study" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -204,7 +134,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hilditch_skeletonization" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/grasp_quality_study.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -213,7 +143,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="mutithreading_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="helpers" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -225,7 +155,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mutithreading_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/helpers.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -234,7 +164,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="vgt2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="refine_nndetection_cornell" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -246,7 +176,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/vgt2.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/refine_nndetection_cornell.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -255,7 +185,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="zhangsuen_thinning" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="vgt3" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -267,7 +197,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/zhangsuen_thinning.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/vgt3.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -278,13 +208,25 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.grasp_feature_test" />
-        <item itemvalue="Python.vgt2" />
-        <item itemvalue="Python.zhangsuen_thinning" />
-        <item itemvalue="Python.hilditch_skeletonization" />
-        <item itemvalue="Python.mutithreading_test" />
+        <item itemvalue="Python.grasp_quality_study" />
+        <item itemvalue="Python.vgt3" />
+        <item itemvalue="Python.refine_nndetection_cornell" />
+        <item itemvalue="Python.evaluate_cornell_grasps" />
+        <item itemvalue="Python.helpers" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -299,128 +241,113 @@
     </task>
     <servers />
   </component>
-  <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="848" extended-state="7" />
-    <editor active="true" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49925485" visible="true" weight="0.088507265" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" sideWeight="0.5007452" side_tool="true" weight="0.17031872" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32914925" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.831572" weight="0.31799164" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39335477" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.3279743" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3279743" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32475883" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.168428" side_tool="true" visible="true" weight="0.31799164" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.8295905" weight="0.28591353" />
-      <window_info anchor="bottom" id="Educational.CheckDetails" order="11" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/multiprocessing/process.py" />
-    <entry file="file://$PROJECT_DIR$/hilditch_skeletonization">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mutithreading_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vision4grasp_tuning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="578" column="61" selection-start-line="577" selection-start-column="4" selection-end-line="578" selection-end-column="90" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dump.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3706">
-          <caret line="219" column="22" selection-start-line="219" selection-start-column="22" selection-end-line="219" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/zhangsuen_thinning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
-          <caret line="89" selection-start-line="89" selection-end-line="89" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image_processing_visualization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1190">
-          <caret line="71" column="46" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/visulize_trajectory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="31" column="76" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="76" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grasp_feature_study.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grasp_feature_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="77" column="35" lean-forward="true" selection-start-line="77" selection-start-column="35" selection-end-line="77" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vgt2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="628">
-          <caret line="256" column="17" lean-forward="true" selection-start-line="256" selection-start-column="17" selection-end-line="256" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="549" y="173" key="FileChooserDialogImpl" timestamp="1579464607920">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="549" y="173" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1579464607920" />
+    <state width="1515" height="140" key="GridCell.Tab.0.bottom" timestamp="1579465176487">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="140" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1899" height="328" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="140" key="GridCell.Tab.0.center" timestamp="1579465176487">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="140" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1899" height="328" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="140" key="GridCell.Tab.0.left" timestamp="1579465176487">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="140" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1899" height="328" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="140" key="GridCell.Tab.0.right" timestamp="1579465176487">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="140" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1899" height="328" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="259" key="GridCell.Tab.1.bottom" timestamp="1579305958307">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="259" key="GridCell.Tab.1.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579305958307" />
+    <state width="1899" height="328" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326414" />
+    <state width="1515" height="259" key="GridCell.Tab.1.center" timestamp="1579305958307">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="259" key="GridCell.Tab.1.center/0.0.1536.834@0.0.1536.834" timestamp="1579305958307" />
+    <state width="1899" height="328" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="259" key="GridCell.Tab.1.left" timestamp="1579305958307">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="259" key="GridCell.Tab.1.left/0.0.1536.834@0.0.1536.834" timestamp="1579305958307" />
+    <state width="1899" height="328" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1515" height="259" key="GridCell.Tab.1.right" timestamp="1579305958307">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1515" height="259" key="GridCell.Tab.1.right/0.0.1536.834@0.0.1536.834" timestamp="1579305958307" />
+    <state width="1899" height="328" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326414" />
+    <state x="228" y="153" width="919" height="565" key="MultipleFileMergeDialog" timestamp="1579465166304">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="228" y="153" width="919" height="565" key="MultipleFileMergeDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465166304" />
+    <state x="277" y="61" key="SettingsEditor" timestamp="1579464812139">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="277" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1579464812139" />
+    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1579465290149">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465290149" />
+    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579464641695">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579464641695" />
+    <state x="581" y="303" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579238947618" />
+    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579465087278">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.834@0.0.1536.834" timestamp="1579465087278" />
   </component>
 </project>

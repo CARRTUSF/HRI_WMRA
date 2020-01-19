@@ -124,6 +124,7 @@
     <Compile Include="Assets\Tian\scripts\ObjectDataBase.cs" />
     <Compile Include="Assets\Tian\scripts\PoseArraySubscriber.cs" />
     <Compile Include="Assets\Tian\scripts\StringSubscriber.cs" />
+    <Compile Include="Assets\Tian\scripts\SwitchView.cs" />
     <Compile Include="Assets\Tian\scripts\TheBrain.cs" />
     <Compile Include="Assets\Tian\scripts\TimeBomb.cs" />
     <Compile Include="Assets\Tian\scripts\UIfunctions.cs" />

@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 import random
-from vgt2 import find_contact_region, get_outline_and_normal, total_loss
+from vgt2 import find_contact_region, get_outline_and_normal
 from visulize_trajectory import plot_grasp_path
 
 

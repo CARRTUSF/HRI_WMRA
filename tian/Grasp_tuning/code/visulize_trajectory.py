@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-import os
 from matplotlib import pyplot as plt
+import os
 
 
 def get_corners(center, theta, h, w):
@@ -31,40 +31,92 @@ def plot_grasp_path(center, theta, h, w, img):
             cv2.line(img, (int(round(new_corners[1][3])), int(round(new_corners[0][3]))),
                      (int(round(new_corners[1][0])), int(round(new_corners[0][0]))), (0, 0, 255))
     cv2.circle(img, (center[1], center[0]), 3, (0, 255, 0), -1)
+    # for i in range(1, h):
+    #     tan_theta = np.tan(np.deg2rad(theta))
+    #     dc = (1 + tan_theta ** 2) ** 0.5
+    #     ur_c = int(round(center[0] - i / dc))
+    #     uc_c = int(round(center[1] + i * tan_theta / dc))
+    #
+    #     dr_c = int(round(center[0] + i / dc))
+    #     dc_c = int(round(center[1] - i * tan_theta / dc))
+    #     cv2.circle(img, (uc_c, ur_c), 2, (255, 0, 0), -1)
+    #     cv2.circle(img, (dc_c, dr_c), 2, (0, 0, 255), -1)
 
 
 def find_new_corner_vectors(corner_vectors, angle):
-    r = (130 ** 2 + 18 ** 2) ** 0.5
-    new_corner_vectors = []
+    # r = (ghw ** 2 + ghh ** 2) ** 0.5
+    # new_corner_vectors = []
+    # for vector in corner_vectors:
+    #     ca = vector[0] / r
+    #     sa = vector[1] / r
+    #     new_vx = (np.cos(np.deg2rad(angle)) * ca - np.sin(np.deg2rad(angle)) * sa) * r
+    #     new_vy = (np.sin(np.deg2rad(angle)) * ca + np.cos(np.deg2rad(angle)) * sa) * r
+    #     new_corner_vectors.append([new_vx, new_vy])
+    # new_corner_vectors = np.array(new_corner_vectors)
+    new_corner_vectors = np.ndarray((0, 2), dtype=np.float16)
+    cos = np.cos(np.deg2rad(angle))
+    sin = np.sin(np.deg2rad(angle))
+    r = np.array([[cos, -sin], [sin, cos]])
     for vector in corner_vectors:
-        ca = vector[0] / r
-        sa = vector[1] / r
-        new_vx = (np.cos(np.deg2rad(angle)) * ca - np.sin(np.deg2rad(angle)) * sa) * r
-        new_vy = (np.sin(np.deg2rad(angle)) * ca + np.cos(np.deg2rad(angle)) * sa) * r
-        new_corner_vectors.append([new_vx, new_vy])
-    new_corner_vectors = np.array(new_corner_vectors)
-    return new_corner_vectors
+        vector = np.array([[vector[0]], [vector[1]]])
+        new_vector = np.matmul(r, vector)
+        new_corner_vectors = np.append(new_corner_vectors, new_vector.reshape(1, 2), axis=0)
+    return np.rint(new_corner_vectors).astype(int)
 
 
-def save_path_image(trajectory, img, path):
-    corner_vectors = np.array([[-130, -18], [130, -18], [130, 18], [-130, 18]])
-    new_corner_vectors = corner_vectors
+def save_path_image(trajectory, img, path, ghh=18, ghw=130, save_rect=False, init_score=-2):
+    """
+
+    :param trajectory:
+    :param ghh: gripper rectangle half height
+    :param ghw: gripper rectangle half width
+    :param img:
+    :param path: path to save the trajectory images
+    :param save_rect:
+    :param init_score:
+    :return:
+    """
+    corner_vectors = np.array([[-ghw, -ghh], [ghw, -ghh], [ghw, ghh], [-ghw, ghh]])
+    new_corners = np.array([[-1]])
     for i in range(trajectory.shape[0]):
         img_copy = np.copy(img)
-        if i != 0:
-            new_corner_vectors = find_new_corner_vectors(corner_vectors, trajectory[i][2])
+        new_corner_vectors = find_new_corner_vectors(corner_vectors, trajectory[i][2])
         center = [int(round(trajectory[i][1])), int(round(trajectory[i][0]))]
         new_corners = new_corner_vectors + np.array([center, center, center, center])
         for k in range(4):
+            line_width = 2
+            line_color = (255, 0, 0)
             if k != 3:
-                cv2.line(img_copy, (int(round(new_corners[k][0])), int(round(new_corners[k][1]))),
-                         (int(round(new_corners[k + 1][0])), int(round(new_corners[k + 1][1]))), (0, 0, 255))
+                if k == 0 or k == 2:
+                    line_width = 1
+                    line_color = (255, 255, 0)
+                cv2.line(img_copy, (new_corners[k][0], new_corners[k][1]),
+                         (new_corners[k + 1][0], new_corners[k + 1][1]), line_color, line_width)
             else:
-                cv2.line(img_copy, (int(round(new_corners[3][0])), int(round(new_corners[3][1]))),
-                         (int(round(new_corners[0][0])), int(round(new_corners[0][1]))), (0, 0, 255))
-        cv2.circle(img, (center[0], center[1]), 3, (0, 255, 0), -1)
-        img_name = path + "\\" + "%d.png" % i
+                cv2.line(img_copy, (new_corners[3][0], new_corners[3][1]),
+                         (new_corners[0][0], new_corners[0][1]), line_color, line_width)
+        cv2.circle(img_copy, (center[0], center[1]), 2, (0, 255, 0), -1)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        score_text = f'{trajectory[i][3]:.4f}'
+        if init_score != -2:
+            init_score = f'{init_score:.4f}'
+            cv2.putText(img_copy, init_score, (50, 50), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(img_copy, score_text, (50, 80), font, 0.5, (255, 0, 0), 1, cv2.LINE_AA)
+        img_name = path + "%d.png" % i
         cv2.imwrite(img_name, img_copy)
+    if save_rect:
+        file_name = path + ".txt"
+        if new_corners[0, 0] != -1:
+            # print(new_corners)
+            new_corners2 = np.ndarray((4, 2), dtype=int)
+            new_corners2[:, 0] = new_corners[:, 1]
+            new_corners2[:, 1] = new_corners[:, 0]
+            # print(new_corners2)
+            temp = np.copy(new_corners2[1, :])
+            new_corners2[1, :] = new_corners2[3, :]
+            new_corners2[3, :] = temp
+            # print(new_corners2)
+        np.savetxt(file_name, new_corners2, fmt='%u')
 
 
 def save_loss_image(loss):
@@ -84,11 +136,15 @@ def save_loss_image(loss):
 
 
 def main():
-    new_corners = get_corners([8, 12], 35, 4, 10)
-    print(new_corners)
-    print(np.amax(new_corners[0,:]))
-    print(np.amin(new_corners[0,:]))
-    # path = os.path.dirname(os.getcwd())
+    trajectory = [[3.14000000e+02, 6.59000000e+02, 0.00000000e+00, 6.20956106e-01],
+                  [3.21122729e+02, 6.59720081e+02, 2.50000000e+01, 8.51581774e-01],
+                  [3.25724929e+02, 6.64915593e+02, 2.80000000e+01, 9.42412786e-01],
+                  [3.25415950e+02, 6.72738615e+02, 3.00000000e+01, 9.71184605e-01]]
+    trajectory = np.array(trajectory)
+    path = os.path.dirname(os.getcwd())
+    image_name = 'spoon3_mask.png'
+    img2 = cv2.imread(os.path.join(path, 'pictures', image_name))
+    save_path_image(trajectory, img2 * 255, r'D:\Temp')
     # image_name = 'lalala.png'
     # img = cv2.imread(os.path.join(path, 'pictures', image_name))
 

@@ -221,7 +221,7 @@ def find_contact_region(outline_pixels, index_array, center, theta):
                         contact_region = np.append(contact_region, [[i+pixel_indices[0], 1]], axis=0)
             if contact_seeds[0, 0] != -1 and contact_seeds[1, 0] != -1:
                 contact_seeds_found = True
-            elif seeding_attempt > 20:
+            elif seeding_attempt > 30:
                 print('cant find contact region*************')
                 contact_region = np.ndarray((0, 2), dtype=np.uint8)
                 return contact_region
@@ -235,9 +235,9 @@ def find_contact_region(outline_pixels, index_array, center, theta):
         for i in range(4):
             if not search_indicator[i]:
                 stopping_row = True
-                if search_rows[i]>len(index_array)-1 or search_rows[i]<0:
+                if search_rows[i] > len(index_array) - 1 or search_rows[i] < 0:
                     pass
-                    #print(search_rows[i])
+                    # print(search_rows[i])
                 else:
                     p_i = index_array[search_rows[i]]
                     p_a = outline_pixels[p_i[0]: p_i[1]+1]
