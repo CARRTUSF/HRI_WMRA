@@ -53,6 +53,7 @@ def main():
 			frame = np.asanyarray(frames.get_color_frame().get_data())
 			
 			# Sends to detectron
+			# returns [vis.png, bbList, labelList, scoreList, maskList]
 			retList = upload(url, frame)
 			if not retList:
 				continue
