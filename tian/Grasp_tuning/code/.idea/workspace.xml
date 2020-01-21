@@ -2,63 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32332548-ae0a-4cf8-a994-89d69578d052" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/Grasp_tuning.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/better_grasp_ranking.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/centering_feature_study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contact_angle_feature_study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cornell_grasp_quality_debug.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/evaluate_cornell_grasps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/extract_center_point_cornell.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/file_manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fun.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/grasp_feature_data_collection_manual.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/grasp_feature_data_generation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/grasp_feature_study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/grasp_quality_study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/grasps_ranking.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/old_version_functions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/opencv_mouse.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/refine_nndetection_cornell.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_score_combine_v2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/torque_feature_study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vgt3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grasp_feature_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/grasp_feature_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vgt2.py" beforeDir="false" afterPath="$PROJECT_DIR$/vgt2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visulize_trajectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/visulize_trajectory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/box.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/box.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/spoon1.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spoon1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/spoon3.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spoon3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/spray.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spray.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/spray1.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/spray1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/tennis.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/tennis.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pictures/wbt.png" beforeDir="false" afterPath="$PROJECT_DIR$/../pictures/wbt.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-shm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/.vs/EzControl4AssistiveRobot/v15/Server/sqlite3/storage.ide-wal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assembly-CSharp.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/main.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/testTouch2Place.unity" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Assets/Tian/Scenes/testTouch2Place.unity.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentLayout.dwlt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/CurrentMaximizeLayout.dwlt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/assetDatabase3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02.info" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/metadata/96/96964b22c3d40c2488f7acd6bb075a02.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/Library/shadercompiler-UnityShaderCompiler.exe0.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp-Editor.csprojAssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../ezTablet_unity/EzControl4AssistiveRobot/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluate_cornell_grasps.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate_cornell_grasps.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +45,7 @@
       <recent name="C:\Users\75077\OneDrive\M3X\HRI_WMRA\tian\Grasp_tuning\" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.grasp_quality_study">
+  <component name="RunManager" selected="Python.evaluate_cornell_grasps">
     <configuration name="evaluate_cornell_grasps" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -208,10 +153,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.evaluate_cornell_grasps" />
         <item itemvalue="Python.grasp_quality_study" />
         <item itemvalue="Python.vgt3" />
         <item itemvalue="Python.refine_nndetection_cornell" />
-        <item itemvalue="Python.evaluate_cornell_grasps" />
         <item itemvalue="Python.helpers" />
       </list>
     </recent_temporary>
@@ -239,6 +184,14 @@
       <option name="presentableId" value="Default" />
       <updated>1557452077980</updated>
     </task>
+    <task id="LOCAL-00001" summary="improved">
+      <created>1579465390450</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1579465390450</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -283,30 +236,39 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="improved" />
+    <option name="LAST_COMMIT_MESSAGE" value="improved" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="417" y="13" key="CommitChangelistDialog2" timestamp="1579465388676">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="417" y="13" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1579465388676" />
     <state x="549" y="173" key="FileChooserDialogImpl" timestamp="1579464607920">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="549" y="173" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1579464607920" />
-    <state width="1515" height="140" key="GridCell.Tab.0.bottom" timestamp="1579465176487">
+    <state width="1515" height="171" key="GridCell.Tab.0.bottom" timestamp="1579649613742">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1515" height="140" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1515" height="171" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
     <state width="1899" height="328" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="140" key="GridCell.Tab.0.center" timestamp="1579465176487">
+    <state width="1515" height="171" key="GridCell.Tab.0.center" timestamp="1579649613742">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1515" height="140" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1515" height="171" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
     <state width="1899" height="328" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="140" key="GridCell.Tab.0.left" timestamp="1579465176487">
+    <state width="1515" height="171" key="GridCell.Tab.0.left" timestamp="1579649613742">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1515" height="140" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1515" height="171" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
     <state width="1899" height="328" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="140" key="GridCell.Tab.0.right" timestamp="1579465176487">
+    <state width="1515" height="171" key="GridCell.Tab.0.right" timestamp="1579649613742">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1515" height="140" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1579465176487" />
+    <state width="1515" height="171" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
     <state width="1899" height="328" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
     <state width="1515" height="259" key="GridCell.Tab.1.bottom" timestamp="1579305958307">
       <screen x="0" y="0" width="1536" height="834" />
@@ -336,18 +298,18 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="277" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1579464812139" />
-    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1579465290149">
+    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1579465600396">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465290149" />
-    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579464641695">
+    <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465600396" />
+    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579625687181">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579464641695" />
+    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579625687181" />
     <state x="581" y="303" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579238947618" />
-    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579465087278">
+    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579649914219">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.834@0.0.1536.834" timestamp="1579465087278" />
+    <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.834@0.0.1536.834" timestamp="1579649914219" />
   </component>
 </project>
