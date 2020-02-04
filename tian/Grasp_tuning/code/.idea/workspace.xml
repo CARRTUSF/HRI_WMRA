@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="32332548-ae0a-4cf8-a994-89d69578d052" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluate_cornell_grasps.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate_cornell_grasps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../push.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +33,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Anaconda3/envs/grasp_evaluation/python.exe" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -246,10 +247,11 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="417" y="13" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1579465388676" />
-    <state x="549" y="173" key="FileChooserDialogImpl" timestamp="1579464607920">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="686" y="245" width="424" height="484" key="FileChooserDialogImpl" timestamp="1579816363324">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="549" y="173" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1579464607920" />
+    <state x="686" y="245" width="424" height="484" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1579816363324" />
     <state width="1515" height="171" key="GridCell.Tab.0.bottom" timestamp="1579649613742">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
@@ -294,19 +296,21 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="228" y="153" width="919" height="565" key="MultipleFileMergeDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465166304" />
-    <state x="277" y="61" key="SettingsEditor" timestamp="1579464812139">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="743" y="143" key="SettingsEditor" timestamp="1579815524831">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="277" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1579464812139" />
+    <state x="743" y="143" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1579815524831" />
     <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1579465600396">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465600396" />
-    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579625687181">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="581" y="334" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579816325316">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579625687181" />
     <state x="581" y="303" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579238947618" />
+    <state x="581" y="334" key="com.intellij.ide.util.TipDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1579816325316" />
     <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579649914219">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

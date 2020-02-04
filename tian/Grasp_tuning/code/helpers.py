@@ -245,7 +245,7 @@ def gpl_intersection_points(r0, c0, sin_theta, cos_theta, hn, w, mask, window_si
         left_contact_found = False
         right_contact_found = False
         while not (left_contact_found and right_contact_found):
-            if not left_contact_found and l2 - l1 >= 1:
+            if not left_contact_found and l2 - l1 > 1:
                 lm = (l1 + l2) / 2
                 # calculate left test point
                 lrt = int(round(r_c + lm * sin_theta))
@@ -260,12 +260,12 @@ def gpl_intersection_points(r0, c0, sin_theta, cos_theta, hn, w, mask, window_si
                     l1 = lm
                 else:
                     l2 = lm
-            elif not left_contact_found and l2 - l1 < 1:
+            elif not left_contact_found and l2 - l1 <= 1:
                 left_contact_point = [-1, -1, 1, -2 * w + 1, hn, 0, 0]  # left side collision
                 intsec_points = np.append(intsec_points, [left_contact_point], axis=0)
                 left_contact_found = True
 
-            if not right_contact_found and r2 - r1 >= 1:
+            if not right_contact_found and r2 - r1 > 1:
                 rm = (r1 + r2) / 2
                 # calculate right test point
                 rrt = int(round(r_c + rm * sin_theta))
@@ -280,7 +280,7 @@ def gpl_intersection_points(r0, c0, sin_theta, cos_theta, hn, w, mask, window_si
                     r2 = rm
                 else:
                     r1 = rm
-            elif not right_contact_found and r2 - r1 < 1:
+            elif not right_contact_found and r2 - r1 <= 1:
                 right_contact_point = [-1, -1, 2, 2 * w + 1, hn, 0, 0]  # right side collision
                 intsec_points = np.append(intsec_points, [right_contact_point], axis=0)
                 right_contact_found = True
