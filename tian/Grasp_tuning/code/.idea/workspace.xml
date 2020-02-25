@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32332548-ae0a-4cf8-a994-89d69578d052" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/evaluate_robot_grasps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/evaluate_cornell_grasps.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate_cornell_grasps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/helpers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +38,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Anaconda3/envs/grasp_evaluation/python.exe" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -67,6 +71,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="evaluate_robot_grasps" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/evaluate_robot_grasps.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="grasp_quality_study" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -80,27 +105,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/grasp_quality_study.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="helpers" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="code" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/helpers.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -154,10 +158,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.evaluate_cornell_grasps" />
+        <item itemvalue="Python.evaluate_robot_grasps" />
         <item itemvalue="Python.grasp_quality_study" />
         <item itemvalue="Python.vgt3" />
         <item itemvalue="Python.refine_nndetection_cornell" />
-        <item itemvalue="Python.helpers" />
       </list>
     </recent_temporary>
   </component>
@@ -191,7 +195,14 @@
       <option name="project" value="LOCAL" />
       <updated>1579465390450</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added code to evaluate the grasp evaluation algorithm using cornell ground truth grasps">
+      <created>1579649984736</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1579649984737</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView">
@@ -238,38 +249,40 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="improved" />
-    <option name="LAST_COMMIT_MESSAGE" value="improved" />
+    <MESSAGE value="added code to evaluate the grasp evaluation algorithm using cornell ground truth grasps" />
+    <option name="LAST_COMMIT_MESSAGE" value="added code to evaluate the grasp evaluation algorithm using cornell ground truth grasps" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="417" y="13" key="CommitChangelistDialog2" timestamp="1579465388676">
+    <state x="417" y="13" key="CommitChangelistDialog2" timestamp="1579649983451">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="417" y="13" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1579465388676" />
-    <state x="549" y="173" key="FileChooserDialogImpl" timestamp="1579464607920">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="417" y="13" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1579649983451" />
+    <state x="686" y="216" key="FileChooserDialogImpl" timestamp="1581468425615">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="549" y="173" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1579464607920" />
-    <state width="1515" height="171" key="GridCell.Tab.0.bottom" timestamp="1579649613742">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="549" y="173" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1579731207944" />
+    <state x="686" y="216" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1581468425615" />
+    <state width="1899" height="313" key="GridCell.Tab.0.bottom" timestamp="1581910198686">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1515" height="171" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
-    <state width="1899" height="328" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="171" key="GridCell.Tab.0.center" timestamp="1579649613742">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1364" height="172" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1579731213593" />
+    <state width="1899" height="313" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1581910198686" />
+    <state width="1899" height="313" key="GridCell.Tab.0.center" timestamp="1581910198686">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1515" height="171" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
-    <state width="1899" height="328" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="171" key="GridCell.Tab.0.left" timestamp="1579649613742">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1364" height="172" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1579731213593" />
+    <state width="1899" height="313" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1581910198686" />
+    <state width="1899" height="313" key="GridCell.Tab.0.left" timestamp="1581910198686">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1515" height="171" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
-    <state width="1899" height="328" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
-    <state width="1515" height="171" key="GridCell.Tab.0.right" timestamp="1579649613742">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1364" height="172" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1579731213592" />
+    <state width="1899" height="313" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1581910198686" />
+    <state width="1899" height="313" key="GridCell.Tab.0.right" timestamp="1581910198686">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1515" height="171" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1579649613742" />
-    <state width="1899" height="328" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578468326413" />
+    <state width="1364" height="172" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1579731213593" />
+    <state width="1899" height="313" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1581910198686" />
     <state width="1515" height="259" key="GridCell.Tab.1.bottom" timestamp="1579305958307">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
@@ -294,19 +307,28 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="228" y="153" width="919" height="565" key="MultipleFileMergeDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465166304" />
-    <state x="277" y="61" key="SettingsEditor" timestamp="1579464812139">
+    <state x="702" y="231" key="RollbackChangesDialog" timestamp="1582600481150">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="702" y="231" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1582600481150" />
+    <state x="277" y="61" key="SettingsEditor" timestamp="1579707125735">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="277" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1579464812139" />
+    <state x="277" y="61" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1579707125735" />
+    <state x="346" y="76" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1579659073914" />
+    <state x="361" y="151" key="Vcs.Push.Dialog.v2" timestamp="1579649989958">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="361" y="151" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1579649989958" />
     <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog" timestamp="1579465600396">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="93" y="93" width="1350" height="648" key="com.intellij.dvcs.ui.CompareBranchesDialog/0.0.1536.834@0.0.1536.834" timestamp="1579465600396" />
-    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1579625687181">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state x="581" y="303" width="754" height="348" key="com.intellij.ide.util.TipDialog" timestamp="1582579997167">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579625687181" />
-    <state x="581" y="303" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579238947618" />
+    <state x="465" y="243" width="754" height="348" key="com.intellij.ide.util.TipDialog/0.0.1536.834@0.0.1536.834" timestamp="1579706984353" />
+    <state x="581" y="303" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1582579997167" />
     <state x="578" y="335" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579649914219">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

@@ -261,7 +261,7 @@ def gpl_intersection_points(r0, c0, sin_theta, cos_theta, hn, w, mask, window_si
                 else:
                     l2 = lm
             elif not left_contact_found and l2 - l1 < 1:
-                left_contact_point = [-1, -1, 1, -2 * w + 1, hn, 0, 0]  # left side collision
+                left_contact_point = [-1, -1, 1, -(2 * w + 1), hn, 0, 0]  # left side collision
                 intsec_points = np.append(intsec_points, [left_contact_point], axis=0)
                 left_contact_found = True
 
