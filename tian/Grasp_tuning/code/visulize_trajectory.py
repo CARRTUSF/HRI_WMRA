@@ -30,7 +30,7 @@ def plot_grasp_path(center, theta, h, w, img):
         else:
             cv2.line(img, (int(round(new_corners[1][3])), int(round(new_corners[0][3]))),
                      (int(round(new_corners[1][0])), int(round(new_corners[0][0]))), (0, 0, 255))
-    cv2.circle(img, (center[1], center[0]), 3, (0, 255, 0), -1)
+    cv2.circle(img, (center[1], center[0]), 3, (0, 50, 255), -1)
     # for i in range(1, h):
     #     tan_theta = np.tan(np.deg2rad(theta))
     #     dc = (1 + tan_theta ** 2) ** 0.5

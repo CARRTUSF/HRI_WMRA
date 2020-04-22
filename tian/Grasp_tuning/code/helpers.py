@@ -95,22 +95,40 @@ def plot_grasp_rect(grasparam, h, w, img, color=(0, 0, 255)):
     cv2.circle(img, (int(grasparam[1]), int(grasparam[0])), 3, color, -1)
 
 
-def plot_contact_profile(profile, r0, c0, img, contact_ids=None):
+def plot_contact_profile(profile, img, side, x, y, theta, w, r, contact_ids=None):
+    space = 10
+    cos_0 = np.cos(np.deg2rad(theta))
+    sin_0 = np.sin(np.deg2rad(theta))
+    n = profile.shape[0]
+    if side == 'left':
+        dr_j1 = -r / 2 - space
+        c_offset = 2
+    else:
+        dr_j1 = r / 2 + space
+        c_offset = -2
     if contact_ids is None:
         contact_ids = []
-    for i in range(profile.shape[0]):
-        h = profile[i]
-        ri = r0 - 5 * i
-        ci = c0
-        ri_e = ri
-        ci_e = int(round(ci + h))
-        color = (255, 255, 255)
+    for wi in range(n):
+        # if side != 'left':
+        #     wi = n-wi-1
+        dw_i = -w*(2*wi-n-1)/(2*(n-1))
+        h = profile[wi]
+        dr_j2 = dr_j1 + h
+        ri = int(round(y + dw_i*cos_0 + dr_j1*sin_0))
+        ci = int(round(x - dw_i*sin_0 + dr_j1*cos_0))
+        ri_e = int(round(y + dw_i*cos_0 + dr_j2*sin_0))
+        ci_e = int(round(x - dw_i*sin_0 + dr_j2*cos_0))
+        color = (166, 247, 247)
         cv2.line(img, (ci, ri), (ci_e, ri_e), color, 2)
     # color = (0, 0, 255)
     for cid in contact_ids:
-        ri_c = r0 - 5 * cid
-        ci_c = int(round(c0 + profile[cid]))
-        cv2.circle(img, (ci_c, ri_c), 2, (0, 0, 255), -1)
+        # if side != 'left':
+        #     cid = n - cid - 1
+        dw_i = -w*(2*cid-n-1)/(2*(n-1))
+        dr_j3 = dr_j1 + profile[cid] + c_offset
+        ri_c = int(round(y + dw_i*cos_0 + dr_j3*sin_0))
+        ci_c = int(round(x - dw_i*sin_0 + dr_j3*cos_0))
+        cv2.circle(img, (ci_c, ri_c), 1, (0, 0, 255), -1)
 
 
 def cv_plot_contact_region(contact_region, img, plot_normal=False, contact_ids=np.array([]), color1=(200, 200, 0),
@@ -261,7 +279,7 @@ def gpl_intersection_points(r0, c0, sin_theta, cos_theta, hn, w, mask, window_si
                 else:
                     l2 = lm
             elif not left_contact_found and l2 - l1 < 1:
-                left_contact_point = [-1, -1, 1, -(2 * w + 1), hn, 0, 0]  # left side collision
+                left_contact_point = [-1, -1, 1, -2 * w - 1, hn, 0, 0]  # left side collision
                 intsec_points = np.append(intsec_points, [left_contact_point], axis=0)
                 left_contact_found = True
 
@@ -540,7 +558,7 @@ def high_level_grasp_feature(left_contact_region, right_contact_region, theta, h
     rcids = np.ndarray((0,), dtype=np.int8)
     # -------find primary contact point and check for collision
     for pt in l_profile:
-        if pt == -2 * w + 1:
+        if pt == -2 * w - 1:
             collision = True
             break
         elif -w <= pt < l_min:
@@ -558,7 +576,7 @@ def high_level_grasp_feature(left_contact_region, right_contact_region, theta, h
             translation = -1
         else:
             # --------------------------translation
-            translation = abs((l_min + r_max) / 2)
+            translation = abs((l_min + r_max) / 2.0)
             # --------------------------rotation
             rot_ang = rotation_angle(l_profile, r_profile, l_min, r_max)
             l_slip_ang, r_slip_ang, lcids, rcids = slippage_angle(l_profile, r_profile, l_normals, r_normals, theta,
@@ -630,7 +648,7 @@ def grasp_quality_score(collision, translation, rot, slip, contact_offset, gripp
     return [score, s1, s2, s3, s4]
 
 
-def grasp_quality_score_v2(collision, translation, rot, slip, contact_offset, gripper_hh):
+def grasp_quality_score_v2(collision, translation, rot, slip, contact_offset, gripper_hh, gripper_hw, new=False):
     # s1 = 0.0
     # s2 = 0.0
     # s3 = 0.0
@@ -640,9 +658,13 @@ def grasp_quality_score_v2(collision, translation, rot, slip, contact_offset, gr
     elif translation == -1:  # no object detected
         score = -1.0
     else:
-        slip_ang = (abs(slip[0]) + abs(slip[1])) / 2
+        slip_ang = (abs(slip[0]) + abs(slip[1])) / 2.0
+        if new:
+            translation = translation/gripper_hw
+            s1 = linearly_normalized_score(translation, 1, [0.0, 1.0, 1.0, 0.0])
+        else:
+            s1 = linearly_normalized_score(translation, 1, [0, 1, 100, 0])
         # contact_offset = contact_offsets[0] + contact_offsets[1]
-        s1 = linearly_normalized_score(translation, 1, [0, 1, 100, 0])
         s2 = linearly_normalized_score(rot, 1, [0, 1, 60, 0])
         s3 = linearly_normalized_score(slip_ang, 1, [0, 1, 60, 0])
         s4 = linearly_normalized_score(contact_offset, 2, [0, 1, 0.5 * gripper_hh, 0.7, gripper_hh, 0])
@@ -689,17 +711,17 @@ def combine_score_v2(scores):
     return final_score
 
 
-def combine_scores_current(scores):
-    features = np.array(scores)[0, :]
-    feature_sum = np.sum(features)
-    if feature_sum == 0:
-        weights = np.repeat(1 / features.shape[0], features.shape[0])
-    else:
-        init_weights = features / feature_sum
-        invert_init_weights = 1 - init_weights
-        weights = invert_init_weights / np.sum(invert_init_weights)
-    score = np.dot(weights, features)
-    return score
+# def combine_scores_current(scores):
+#     features = np.array(scores)[0, :]
+#     feature_sum = np.sum(features)
+#     if feature_sum == 0:
+#         weights = np.repeat(1 / features.shape[0], features.shape[0])
+#     else:
+#         init_weights = features / feature_sum
+#         invert_init_weights = 1 - init_weights
+#         weights = invert_init_weights / np.sum(invert_init_weights)
+#     score = np.dot(weights, features)
+#     return score
 
 
 if __name__ == '__main__':
