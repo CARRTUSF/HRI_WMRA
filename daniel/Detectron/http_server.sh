@@ -6,13 +6,21 @@ if [ $# -eq 0 ]
 			--cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
 			--wts ./models/e2e_mask_rcnn_R-101-FPN_2x.pkl \
 			--thresh 0.5
+
+elif [ $# -eq 1 ]
+	then
+		sudo $CONDA_PREFIX/bin/python http_server.py \
+			--cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
+			--wts ./models/e2e_mask_rcnn_R-101-FPN_2x.pkl \
+			--thresh 0.5 \
+			--cuda $1
 	
 	# Arguments passed for cuda, ip, port
 	else
 		sudo $CONDA_PREFIX/bin/python http_server.py \
 			--cfg configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml \
 			--wts ./models/e2e_mask_rcnn_R-101-FPN_2x.pkl \
-			--thresh 0.3 \
+			--thresh 0.5 \
 			--cuda $1 \
 			--ip $2 \
 			--port $3
