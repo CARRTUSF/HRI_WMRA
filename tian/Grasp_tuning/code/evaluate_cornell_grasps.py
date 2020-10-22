@@ -125,9 +125,9 @@ def evaluate_all_grasps():
         np.savetxt(os.path.join(path, 'refined_results', file_name), results, fmt='%.4f')
 
 
-def draw_grasp_rectangles(img, poses):
+def draw_grasp_rectangles(img, poses, color1=(255, 0, 0), color2=(255, 255, 0), rc_switch=False, order_shift=0):
     for i in range(int(poses.shape[0] / 4)):
-        pose_i = four_pts2center_ang(poses[4 * i: 4 * (i + 1), :], True, 1)
+        pose_i = four_pts2center_ang(poses[4 * i: 4 * (i + 1), :], rc_switch, order_shift)
         ghh = pose_i[3]
         ghw = pose_i[4]
         corner_vectors = np.array([[-ghw, -ghh], [ghw, -ghh], [ghw, ghh], [-ghw, ghh]])
@@ -136,11 +136,11 @@ def draw_grasp_rectangles(img, poses):
         new_corners = new_corner_vectors + np.array([center, center, center, center])
         for k in range(4):
             line_width = 2
-            line_color = (255, 0, 0)
+            line_color = color1
             if k != 3:
                 if k == 0 or k == 2:
                     line_width = 1
-                    line_color = (255, 255, 0)
+                    line_color = color2
                 cv2.line(img, (new_corners[k][0], new_corners[k][1]),
                          (new_corners[k + 1][0], new_corners[k + 1][1]), line_color, line_width)
             else:
@@ -150,42 +150,77 @@ def draw_grasp_rectangles(img, poses):
     return img
 
 
-def data_filter():
+def human_evaluate(eval_type, save_file):
     path = r'C:\Users\75077\OneDrive\2019\grasp_evaluation_ws\dataset'
-    path_c = r'D:\PhD\NNTraining\data\rawDataSet'
-    n = 370
-    data = np.loadtxt(os.path.join(path, 'IdMapping.txt'), dtype=np.int16, delimiter=',')
-    good_ones = np.empty((0, 1), dtype=np.uint8)
-    good_counter = 0
-    # print(data)
-    for i in range(n):
+    # path_c = r'D:\PhD\NNTraining\data\rawDataSet'
+    path_c = r'E:\NNTraining\data\rawDataSet'
+    data = np.loadtxt(os.path.join(path, 'good_masks.txt'), dtype=np.int16)
+    successful_ones = np.empty((0,), dtype=np.uint16)
+    low_successful_ones = np.empty((0,), dtype=np.uint16)
+    success_counter = 0
+    low_success_counter = 0
+    print(data)
+    for i in range(data.shape[0]):
         print(i)
-        inst_n = data[i, 1]
+        inst_n = data[i]
+        print(inst_n)
         if inst_n >= 1000:
             mask_img_name = 'pcd' + str(inst_n) + 'mask.png'
             orginal_img_name = 'pcd' + str(inst_n) + 'r.png'
             pos_pose_file = 'pcd' + str(inst_n) + 'cpos.txt'
-            save_id = str(inst_n)
+            detected_pose_file = 'dr' + str(inst_n) + '.txt'
+            refined_pose_file = 'dr' + str(inst_n) + 'rf.txt'
         else:
             mask_img_name = 'pcd0' + str(inst_n) + 'mask.png'
             orginal_img_name = 'pcd0' + str(inst_n) + 'r.png'
             pos_pose_file = 'pcd0' + str(inst_n) + 'cpos.txt'
-            save_id = '0' + str(inst_n)
+            detected_pose_file = 'dr0' + str(inst_n) + '.txt'
+            refined_pose_file = 'dr0' + str(inst_n) + 'rf.txt'
+
         img = cv2.imread(os.path.join(path_c, orginal_img_name))
         mask = cv2.imread(os.path.join(path, 'masks', mask_img_name))
         mask[:, :, 0] = mask[:, :, 0] * 0
         mask[:, :, 2] = mask[:, :, 2] * 0
         result_img = cv2.addWeighted(img, 1, mask, 0.2, 0)
         pos_poses = np.loadtxt(os.path.join(path_c, pos_pose_file), dtype=np.float16)
-        show_img = draw_grasp_rectangles(result_img, pos_poses)
-        cv2.imshow('green mask', show_img)
-        usr_in = cv2.waitKey()
-        if usr_in == ord('y'):
-            good_counter += 1
-            print('valid data...', good_counter)
-            good_ones = np.append(good_ones, [[inst_n]], axis=0)
+        pred_pose = np.loadtxt(os.path.join(path, 'detection_results', detected_pose_file), dtype=np.float16)
+        refined_pose = np.loadtxt(os.path.join(path, 'refined_results', refined_pose_file), dtype=np.float16)
+
+        if eval_type == 1:
+            print('evaluate predicted grasp...')
+            show_img = draw_grasp_rectangles(result_img, pred_pose, (0, 0, 255), (200, 0, 200))
+            img_cp = np.copy(show_img)
+            show_img2 = draw_grasp_rectangles(img_cp, pos_poses, rc_switch=True, order_shift=1)
+        elif eval_type == 2:
+            print('evaluate refined grasp...')
+            show_img = draw_grasp_rectangles(result_img, refined_pose, (0, 100, 255), (200, 100, 100))
+            img_cp = np.copy(show_img)
+            show_img2 = draw_grasp_rectangles(img_cp, pos_poses, rc_switch=True, order_shift=1)
+        else:
+            show_img = draw_grasp_rectangles(result_img, np.empty((0,)))
+            show_img2 = draw_grasp_rectangles(result_img, pos_poses)
+        # show_img = draw_grasp_rectangles(result_img, pos_poses)
+        cv2.imshow('show grasps', show_img)
+        while True:
+            usr_in = cv2.waitKey()
+            if usr_in == ord('y'):
+                success_counter += 1
+                print('success...', success_counter)
+                successful_ones = np.append(successful_ones, inst_n)
+                break
+            if usr_in == ord('u'):
+                low_success_counter += 1
+                print('success...', low_success_counter)
+                low_successful_ones = np.append(low_successful_ones, inst_n)
+                break
+            elif usr_in == ord('n'):
+                print('fail...')
+                break
+            elif usr_in == ord('i'):
+                print('show positives')
+                cv2.imshow('show grasps', show_img2)
         cv2.destroyAllWindows()
-    np.savetxt(os.path.join(path, 'good_examples.txt'), good_ones, fmt='%u')
+    np.savetxt(os.path.join(path, save_file), successful_ones, fmt='%u')
 
 
 def categorize_score(categories, score):
@@ -247,6 +282,41 @@ def draw_table(data_array, title_array=None, cell_width=5):
     return print_str
 
 
+def eval_human_data():
+    path = r'C:\Users\75077\OneDrive\2019\grasp_evaluation_ws\dataset'
+    success = np.loadtxt(os.path.join(path, 'predict_success_tian.txt'), dtype=np.int16)
+    all_data = np.loadtxt(os.path.join(path, 'good_masks.txt'), dtype=np.int16)
+    rate = np.round(success.shape[0] / all_data.shape[0] * 100, 2)
+    print('human eval:', rate, '%')
+    detected_scores = np.empty((0, 1))
+    refined_scores = np.empty((0, 1))
+    for i in range(success.shape[0]):
+        inst_n = success[i]
+        if inst_n >= 1000:
+            mask_img_name = 'pcd' + str(inst_n) + 'mask.png'
+            detected_pose_file = 'dr' + str(inst_n) + '.txt'
+            refined_pose_file = 'dr' + str(inst_n) + 'rf.txt'
+        else:
+            mask_img_name = 'pcd0' + str(inst_n) + 'mask.png'
+            detected_pose_file = 'dr0' + str(inst_n) + '.txt'
+            refined_pose_file = 'dr0' + str(inst_n) + 'rf.txt'
+        detected_pose = np.loadtxt(os.path.join(path, 'detection_results', detected_pose_file), dtype=np.float16)
+        refined_pose = np.loadtxt(os.path.join(path, 'refined_results', refined_pose_file), dtype=np.float16)
+        mask_img = cv2.imread(os.path.join(path, 'masks', mask_img_name))
+        Im = mask_img[:, :, 0] / 255
+        detected_pose_ca = four_pts2center_ang(detected_pose)
+        # show_grasps(detected_pose_ca, mask_img)
+        detected_score = evaluate_grasp(detected_pose_ca, Im)
+        refined_pose_ca = four_pts2center_ang(refined_pose)
+        # show_grasps(refined_pose_ca, mask_img)
+        refined_score = evaluate_grasp(refined_pose_ca, Im)
+        detected_scores = np.append(detected_scores, [[detected_score]], axis=0)
+        refined_scores = np.append(refined_scores, refined_score)
+    print(detected_scores)
+    np.savetxt(os.path.join(path, 'he_detected_scores.txt'), detected_scores, fmt='%.4f')
+    # np.savetxt(os.path.join(path, 'he_refined_scores.txt'), refined_score, fmt='%.4f')
+
+
 def main():
     """
     evaluate average score of positive and negative grasps, evaluate grasp detection successful rate, and the rate after
@@ -256,7 +326,7 @@ def main():
     path = r'C:\Users\75077\OneDrive\2019\grasp_evaluation_ws\dataset'
     n = 370
     data = np.loadtxt(os.path.join(path, 'IdMapping.txt'), dtype=np.int16, delimiter=',')
-    bad_masks = np.empty((0,))
+    good_masks = np.empty((0,))
     valid_mask_count = 0
     good_eval_count = 0.0
     valid_scores_sum = np.zeros((2,))
@@ -302,9 +372,8 @@ def main():
         score_hist += current_inst_score_hist
         score_count[0] += good_scores.shape[0]
         score_count[1] += bad_scores.shape[0]
-        if np.amin(good_scores) < 0.05:
-            bad_masks = np.append(bad_masks, inst_n)
-        else:
+        if np.amin(good_scores) > 0.05:
+            good_masks = np.append(good_masks, inst_n)
             valid_score_hist += current_inst_score_hist
             valid_score_count[0] += good_scores.shape[0]
             valid_score_count[1] += bad_scores.shape[0]
@@ -336,11 +405,11 @@ def main():
     # pn_result: average positive score , average negative score, percentage of which positive>0.8 and negative<0.3, valid masks count
     pn_result = np.append(pn_result, valid_mask_count)
 
-    bad_mask_file = os.path.join(path, 'bad_masks.txt')  # id of the bad masks
+    good_mask_file = os.path.join(path, 'good_masks.txt')  # id of the bad masks
     pn_result_file = os.path.join(path, 'pn_result.txt')
     dr_result_file = os.path.join(path, 'dr_result.txt')
 
-    np.savetxt(bad_mask_file, bad_masks, fmt='%u')
+    np.savetxt(good_mask_file, good_masks, fmt='%u')
     np.savetxt(pn_result_file, pn_result, fmt='%.4f')
     np.savetxt(dr_result_file, dr_result, fmt='%.4f')
 
@@ -359,37 +428,71 @@ def main():
         '^^^^  cornell grasp dataset 225 instances(with valid mask detection) ground truth grasp score distribution  ^^^^')
     print(draw_table(valid_score_hist_post, title, cell_width=8))
 
-    plt.figure(1)
-    plt.subplot(221)
-    plt.bar(np.arange(1, 12), score_hist[0, :])
-    plt.xticks(np.arange(1, 12))
-    plt.subplot(223)
-    plt.bar(np.arange(1, 12), score_hist[1, :])
-    plt.xticks(np.arange(1, 12))
+    fig1, axs1 = plt.subplots(1, 2, constrained_layout=True)
+    fig1.suptitle('Grasp score distribution of 370 instances from Cornell grasping dataset')
+    axs1[0].bar(np.arange(0, 100, 10), score_hist[0, :-1], width=8)
+    axs1[0].set_xticks(np.arange(0, 100, 10))
+    axs1[0].set_xlabel('grasp success chance')
+    axs1[0].set_ylabel('number of grasps')
+    plt.sca(axs1[0])
+    plt.sca(axs1[1])
+    axs1[0].set_title('2250 ground truth positive grasps')
 
-    plt.subplot(222)
-    plt.bar(np.arange(1, 12), valid_score_hist[0, :])
-    plt.xticks(np.arange(1, 12))
-    plt.subplot(224)
-    plt.bar(np.arange(1, 12), valid_score_hist[1, :])
-    plt.xticks(np.arange(1, 12))
-    plt.show()
+    axs1[1].bar(np.arange(0, 100, 10), score_hist[1, :-1], width=8)
+    axs1[1].set_xticks(np.arange(0, 100, 10))
+    axs1[1].set_xlabel('grasp success chance')
+    axs1[1].set_ylabel('number of grasps')
+    axs1[1].set_title('1199 ground truth negative grasps')
 
-    plt.figure(2)
-    plt.subplot(131)
-    plt.title('NN detection results')
-    plt.bar(np.arange(7, 10), dr_result[1:, 0] / valid_mask_count)
-    plt.xticks(np.arange(7, 10))
-    plt.yticks(np.round(dr_result[1:, 0] / valid_mask_count, 2))
-    plt.xlabel('grasp score category')
-    plt.ylabel('Percentages')
-    plt.subplot(133)
-    plt.title('Refined results')
-    plt.bar(np.arange(7, 10), dr_result[1:, 1] / valid_mask_count)
-    plt.xticks(np.arange(7, 10))
-    plt.yticks(np.round(dr_result[1:, 1] / valid_mask_count, 2))
-    plt.xlabel('grasp score category')
-    plt.ylabel('Percentages')
+    fig2, axs2 = plt.subplots(1, 2, constrained_layout=True)
+    fig2.suptitle('Grasp score distribution of 225 instances from Cornell grasping dataset with valid masks')
+    plt.sca(axs2[0])
+    plt.sca(axs2[1])
+    axs2[0].bar(np.arange(0, 100, 10), valid_score_hist[0, :-1], width=8)
+    axs2[0].set_xticks(np.arange(0, 100, 10))
+    axs2[0].set_xlabel('grasp success chance')
+    axs2[0].set_ylabel('number of grasps')
+    axs2[0].set_title('1051 ground truth positive grasps')
+
+    axs2[1].bar(np.arange(0, 100, 10), valid_score_hist[1, :-1], width=8)
+    axs2[1].set_xticks(np.arange(0, 100, 10))
+    axs2[1].set_xlabel('grasp success chance')
+    axs2[1].set_ylabel('number of grasps')
+    axs2[1].set_title('710 ground truth negative grasps')
+
+    fig3, axs3 = plt.subplots(1, 2, constrained_layout=True)
+    fig3.suptitle('NN detection and refinement evaluation')
+    plt.sca(axs3[0])
+    plt.sca(axs3[1])
+    axs3[0].bar(np.arange(7, 10), dr_result[1:, 0] / valid_mask_count * 100)
+    axs3[0].set_xticks(np.arange(7, 10))
+    axs3[0].set_yticks(np.round(dr_result[1:, 0] / valid_mask_count * 100, 2))
+    axs3[0].set_xlabel('grasp success chance')
+    axs3[0].set_ylabel('percentage of grasps')
+    axs3[0].set_title('Ian Lenz 2013 NN detection result')
+
+    axs3[1].bar(np.arange(7, 10), dr_result[1:, 1] / valid_mask_count * 100)
+    axs3[1].set_xticks(np.arange(7, 10))
+    axs3[1].set_yticks(np.round(dr_result[1:, 1] / valid_mask_count * 100, 2))
+    axs3[1].set_xlabel('grasp success chance')
+    axs3[1].set_ylabel('percentage of grasps')
+    axs3[1].set_title('Refined NN detection result')
+
+    # plt.figure(2)
+    # plt.subplot(131)
+    # plt.title('NN detection results')
+    # plt.bar(np.arange(7, 10), dr_result[1:, 0] / valid_mask_count)
+    # plt.xticks(np.arange(7, 10))
+    # plt.yticks(np.round(dr_result[1:, 0] / valid_mask_count, 2))
+    # plt.xlabel('grasp score category')
+    # plt.ylabel('Percentages')
+    # plt.subplot(133)
+    # plt.title('Refined results')
+    # plt.bar(np.arange(7, 10), dr_result[1:, 1] / valid_mask_count)
+    # plt.xticks(np.arange(7, 10))
+    # plt.yticks(np.round(dr_result[1:, 1] / valid_mask_count, 2))
+    # plt.xlabel('grasp score category')
+    # plt.ylabel('Percentages')
     plt.show()
 
     print('my algorithm evaluated successful rate of NN detection: ',
@@ -398,9 +501,13 @@ def main():
           np.round(np.sum(dr_result[1:, 1]) / dr_result[0, 0] * 100, 2), '%')
     print('human evaluated successful rate of NN detection: ')
     print('human evaluated successful rate after refinements: ')
+    print(good_masks.shape)
 
 
 if __name__ == '__main__':
     # data_filter()
     # evaluate_all_grasps()
     main()
+    # human_evaluate(1, 'predict_success_tian.txt')
+    # human_evaluate(2, 'refine_success_tian.txt'))
+    # eval_human_data()
