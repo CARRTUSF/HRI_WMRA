@@ -10,7 +10,7 @@ from tensorflow.keras.backend import set_session
 
 from ggcnn_timeit import TimeIt
 
-MODEL_FILE = 'ggcnn_model/epoch_29_model.hdf5'
+MODEL_FILE = '../ggcnn_model/epoch_29_model.hdf5'
 sess = tf.Session()
 set_session(sess)
 graph = tf.compat.v1.get_default_graph()

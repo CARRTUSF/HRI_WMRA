@@ -1,12 +1,8 @@
 import os
 import sys
-import copy
 import geometry_msgs.msg
 import rospy
-import cv2
-import warnings
 import numpy as np
-import quaternion
 import moveit_commander
 import moveit_msgs.msg
 from pyquaternion import Quaternion

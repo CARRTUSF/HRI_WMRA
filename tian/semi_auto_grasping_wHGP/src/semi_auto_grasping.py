@@ -3,15 +3,12 @@ import sys
 import rospy
 import cv2
 import moveit_commander
-import ros_numpy
 import pyrealsense2 as realsense
 import open3d as o3d
 import numpy as np
-# import quaternion   # numpy-quaternion
 from pyquaternion import Quaternion
 import moveit_msgs.msg
 import geometry_msgs.msg
-# from moveit_commander.conversions import pose_to_list
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import PointCloud2, PointField
 from cv_bridge import CvBridge
@@ -265,7 +262,7 @@ def main():
                 if auto_reach_complete:
                     user_adjust_complete = False
                     # user adjust grasp direction
-                    while not user_adjust_complete:
+                    # while not user_adjust_complete:
 
 
 
@@ -284,99 +281,99 @@ def main():
             current_pose_param = cartesian2spherical_coords(current_pose.position)
 
             # up side view pose
-            for theta_i in upside_thetas:
-                view_params = [np.pi, theta_i, pre_d]
-                view_pose_ij = view_param2cart_pose(poi_in_rob, view_params)
-                reachability_ij, plan = move_my_gen3.plan_to_cartesian_pose(view_pose_ij, 0.5)
-                if reachability_ij == 1:
-                    print('============')
-                    print(view_params)
-                    trajectory_params = scanning_trajectory_waypoint_poses(
-                        [[np.pi, np.pi / 4, pre_d], [np.pi, theta_i, pre_d]])
-                    reverse_trajectory_params = scanning_trajectory_waypoint_poses(
-                        [[np.pi, theta_i, pre_d], [np.pi, np.pi / 4, pre_d]])
-                    print(trajectory_params)
-                    print(reverse_trajectory_params)
-                    trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
-                    reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob, reverse_trajectory_params)
-                    print(trajectory_poses)
-                    print(reverse_trajectory_poses)
-                    trajectory_plan, trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(trajectory_poses,
-                                                                                                   display_trajectory=True)
-                    # print(trajectory_plan)
-                    print(trajectory_frac)
-                    if trajectory_frac > 0.7:
-                        move_my_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
-                        # take images
-                        rospy.sleep(2)
-                        reverse_trajectory_poses[0] = move_my_gen3.arm_group.get_current_pose().pose
-                        print(reverse_trajectory_poses)
-                        reverse_trajectory_plan, reverse_trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
-                            reverse_trajectory_poses,
-                            display_trajectory=True)
-                        print(reverse_trajectory_frac)
-                        if reverse_trajectory_frac > 0.7:
-                            move_my_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
-                    break
+            # for theta_i in upside_thetas:
+            #     view_params = [np.pi, theta_i, pre_d]
+            #     view_pose_ij = view_param2cart_pose(poi_in_rob, view_params)
+            #     reachability_ij, plan = move_my_gen3.plan_to_cartesian_pose(view_pose_ij, 0.5)
+            #     if reachability_ij == 1:
+            #         print('============')
+            #         print(view_params)
+            #         trajectory_params = scanning_trajectory_waypoint_poses(
+            #             [[np.pi, np.pi / 4, pre_d], [np.pi, theta_i, pre_d]])
+            #         reverse_trajectory_params = scanning_trajectory_waypoint_poses(
+            #             [[np.pi, theta_i, pre_d], [np.pi, np.pi / 4, pre_d]])
+            #         print(trajectory_params)
+            #         print(reverse_trajectory_params)
+            #         trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
+            #         reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob, reverse_trajectory_params)
+            #         print(trajectory_poses)
+            #         print(reverse_trajectory_poses)
+            #         trajectory_plan, trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(trajectory_poses,
+            #                                                                                        display_trajectory=True)
+            #         # print(trajectory_plan)
+            #         print(trajectory_frac)
+            #         if trajectory_frac > 0.7:
+            #             move_my_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
+            #             # take images
+            #             rospy.sleep(2)
+            #             reverse_trajectory_poses[0] = move_my_gen3.arm_group.get_current_pose().pose
+            #             print(reverse_trajectory_poses)
+            #             reverse_trajectory_plan, reverse_trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
+            #                 reverse_trajectory_poses,
+            #                 display_trajectory=True)
+            #             print(reverse_trajectory_frac)
+            #             if reverse_trajectory_frac > 0.7:
+            #                 move_my_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
+            #         break
+            #
+            # # down side view poses
+            # view_pose_found = False
+            # for phi in phis_1:
+            #     if not view_pose_found:
+            #         for theta_i in downside_thetas:
+            #             view_params = [phi, theta_i, pre_d]
+            #             print(view_params)
+            #             view_pose_ij = view_param2cart_pose(poi_in_rob, view_params)
+            #             reachability_ij, plan = move_my_gen3.plan_to_cartesian_pose(view_pose_ij, 1)
+            #             if reachability_ij == 1:
+            #                 view_pose_found = True
+            #                 print('============')
+            #                 print(view_params)
+            #                 current_p = move_my_gen3.arm_group.get_current_pose().pose.position
+            #                 current_p_ = [current_p.x - poi_in_rob.x, current_p.y - poi_in_rob.y,
+            #                               current_p.z - poi_in_rob.z]
+            #                 current_pose_param = cartesian2spherical_coords(current_p_)
+            #                 print(current_pose_param)
+            #                 trajectory_params = scanning_trajectory_waypoint_poses([current_pose_param, view_params])
+            #                 print(trajectory_params)
+            #                 reverse_trajectory_params = scanning_trajectory_waypoint_poses(
+            #                     [view_params, [np.pi, np.pi / 4, pre_d]])
+            #                 trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
+            #                 reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob,
+            #                                                                        reverse_trajectory_params)
+            #                 trajectory_plan, trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
+            #                     trajectory_poses,
+            #                     display_trajectory=True)
+            #                 # print(trajectory_plan)
+            #                 print(trajectory_frac)
+            #                 if trajectory_frac > 0.7:
+            #                     move_my_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
+            #                     # take images
+            #                     rospy.sleep(2)
+            #                     reverse_trajectory_poses[0] = move_my_gen3.arm_group.get_current_pose().pose
+            #                     print(reverse_trajectory_poses)
+            #                     reverse_trajectory_plan, reverse_trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
+            #                         reverse_trajectory_poses,
+            #                         display_trajectory=True)
+            #                     print(reverse_trajectory_frac)
+            #                     if reverse_trajectory_frac > 0.7:
+            #                         move_my_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
+            #                 break
 
-            # down side view poses
-            view_pose_found = False
-            for phi in phis_1:
-                if not view_pose_found:
-                    for theta_i in downside_thetas:
-                        view_params = [phi, theta_i, pre_d]
-                        print(view_params)
-                        view_pose_ij = view_param2cart_pose(poi_in_rob, view_params)
-                        reachability_ij, plan = move_my_gen3.plan_to_cartesian_pose(view_pose_ij, 1)
-                        if reachability_ij == 1:
-                            view_pose_found = True
-                            print('============')
-                            print(view_params)
-                            current_p = move_my_gen3.arm_group.get_current_pose().pose.position
-                            current_p_ = [current_p.x - poi_in_rob.x, current_p.y - poi_in_rob.y,
-                                          current_p.z - poi_in_rob.z]
-                            current_pose_param = cartesian2spherical_coords(current_p_)
-                            print(current_pose_param)
-                            trajectory_params = scanning_trajectory_waypoint_poses([current_pose_param, view_params])
-                            print(trajectory_params)
-                            reverse_trajectory_params = scanning_trajectory_waypoint_poses(
-                                [view_params, [np.pi, np.pi / 4, pre_d]])
-                            trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
-                            reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob,
-                                                                                   reverse_trajectory_params)
-                            trajectory_plan, trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
-                                trajectory_poses,
-                                display_trajectory=True)
-                            # print(trajectory_plan)
-                            print(trajectory_frac)
-                            if trajectory_frac > 0.7:
-                                move_my_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
-                                # take images
-                                rospy.sleep(2)
-                                reverse_trajectory_poses[0] = move_my_gen3.arm_group.get_current_pose().pose
-                                print(reverse_trajectory_poses)
-                                reverse_trajectory_plan, reverse_trajectory_frac = move_my_gen3.plan_trajectory_from_waypoints(
-                                    reverse_trajectory_poses,
-                                    display_trajectory=True)
-                                print(reverse_trajectory_frac)
-                                if reverse_trajectory_frac > 0.7:
-                                    move_my_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
-                            break
-
-                current_pose = arm_group.get_current_pose()
-                current_pose_array = np.array([current_pose.position.x,
-                                               current_pose.position.y,
-                                               current_pose.position.z,
-                                               current_pose.orientation.w,
-                                               current_pose.orientation.x,
-                                               current_pose.orientation.y,
-                                               current_pose.orientation.z])
-                cv2.imshow('hand camera color', color_img)
-                cv2.imshow('hand camera depth', depth_img)
-                cv2.imwrite(os.path.join(views_save_dir, 'color', str(j)+'.jpg'), color_img)
-                cv2.imwrite(os.path.join(views_save_dir, 'depth', str(j) + '.png'), depth_img)
-                np.savetxt(os.path.join(views_save_dir, str(j) + '_pose.txt'), current_pose_array, fmt='%.6f')
-                cv2.waitKey(1)
+                # current_pose = arm_group.get_current_pose()
+                # current_pose_array = np.array([current_pose.position.x,
+                #                                current_pose.position.y,
+                #                                current_pose.position.z,
+                #                                current_pose.orientation.w,
+                #                                current_pose.orientation.x,
+                #                                current_pose.orientation.y,
+                #                                current_pose.orientation.z])
+                # cv2.imshow('hand camera color', color_img)
+                # cv2.imshow('hand camera depth', depth_img)
+                # cv2.imwrite(os.path.join(views_save_dir, 'color', str(j)+'.jpg'), color_img)
+                # cv2.imwrite(os.path.join(views_save_dir, 'depth', str(j) + '.png'), depth_img)
+                # np.savetxt(os.path.join(views_save_dir, str(j) + '_pose.txt'), current_pose_array, fmt='%.6f')
+                # cv2.waitKey(1)
             cv2.destroyAllWindows()
         # if moved2object:
         #     pc_file_index = -1
