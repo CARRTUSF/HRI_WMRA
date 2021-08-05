@@ -1,20 +1,22 @@
 import os
 import sys
 import rospy
-import cv2
-import moveit_commander
+from cv2 import cv2
 import pyrealsense2 as realsense
 import open3d as o3d
 import numpy as np
 from pyquaternion import Quaternion
-import moveit_msgs.msg
+from kortex_driver.msg import *
 import geometry_msgs.msg
 from sensor_msgs.msg import Image
-from sensor_msgs.msg import PointCloud2, PointField
+from std_msgs.msg import Empty as std_Empty
+# from sensor_msgs.msg import PointCloud2, PointField
 from cv_bridge import CvBridge
 from utils import view_param2cart_pose, cartesian2spherical_coords
+from tt_move_gen3 import MoveMyGen3, jacobian_spherical2cartesian
+import pygame
 
-os.environ["ROS_NAMESPACE"] = "/my_gen3/"
+# os.environ["ROS_NAMESPACE"] = "/my_gen3/"
 bridge = CvBridge()
 SCENE_IMG_CLICKED_AT = (-1, -1)
 # xyz = np.empty((0, 3))
@@ -95,7 +97,7 @@ def scene_img_click(event, x, y, flags, param):
 
 def color_callback(color_msg):
     global color_img
-    color_img = bridge.imgmsg_to_cv2(color_msg, 'bgr8')
+    color_img = bridge.imgmsg_to_cv2(color_msg, 'rgb8')
 
 
 def depth_callback(depth_msg):
@@ -130,8 +132,10 @@ def main():
     rospy.Subscriber('/camera/color/image_raw', Image, color_callback, queue_size=1)
     rospy.Subscriber('/camera/depth_registered/sw_registered/image_rect', Image, depth_callback, queue_size=1)
     # rospy.Subscriber('/camera/depth_registered/points', PointCloud2, pc2_callback, queue_size=1)
+    twist_command_pub = rospy.Publisher('/my_gen3/in/cartesian_velocity', kortex_driver.msg.TwistCommand, queue_size=5)
+    stop_command_pub = rospy.Publisher('/my_gen3/in/stop', std_Empty, queue_size=1)
     # ------------------------------------ parameters -----------------------------------------
-    print('--------------Initializing parameters-------------')
+    rospy.loginfo('--------------Initializing parameters-------------')
     global SCENE_IMG_CLICKED_AT, color_img, depth_img  # xyz, rgb
     pre_d = 0.25    # in meter
     # ---------------- eye-to-hand camera pose in robot base frame -----------------
@@ -139,15 +143,14 @@ def main():
     # position as quaternion 0 x y z
     cam_in_robot_pose_p_q = Quaternion(0.0, 0.703286572, -0.479129947, 0.407774383)
     cam_in_robot_pose_r_q = Quaternion(0.446737, -0.846885, -0.243772, 0.155097)  # rotation as quaternion w x y z
-
     # ----------------------------- realsense camera initialization ---------------------------
-    print('--------initializing realsense L515 camera---------')
+    rospy.loginfo('--------Initializing realsense L515 camera---------')
     rs_pipe = realsense.pipeline()  # camera pipeline object
     rs_profile = rs_pipe.start()  # start camera
     # get depth scale
     rs_depth_sensor = rs_profile.get_device().first_depth_sensor()
     rs_depth_scale = rs_depth_sensor.get_depth_scale()
-    print rs_profile.get_device(), 'is enabled'
+    print(rs_profile.get_device(), 'is enabled')
     print("Camera depth image's depth scale is: ", rs_depth_scale)
     # get depth camera intrinsics
     # rs_depth_intrinsics = rs_profile.get_stream(realsense.stream.depth).as_video_stream_profile().get_intrinsics()
@@ -159,51 +162,48 @@ def main():
     for x in range(5):
         rs_pipe.wait_for_frames()
     # -----------------------------MoveIt! initialization -------------------------------------
-    print('---------------Initializing MoveIt-------------')
-    moveit_commander.roscpp_initialize(sys.argv)
-    is_gripper_present = rospy.get_param("/my_gen3/" + "is_gripper_present", False)
-    if is_gripper_present:
-        gripper_joint_names = rospy.get_param("/my_gen3/" + "gripper_joint_names", [])
-        gripper_joint_name = gripper_joint_names[0]
-    else:
-        gripper_joint_name = ""
-        degrees_of_freedom = rospy.get_param("/my_gen3/" + "degrees_of_freedom", 7)
-    # Create the MoveItInterface necessary objects
-    arm_group_name = "arm"
-    robot = moveit_commander.RobotCommander("robot_description")
-    scene = moveit_commander.PlanningSceneInterface(ns="/my_gen3/")
-    arm_group = moveit_commander.MoveGroupCommander(arm_group_name, ns="/my_gen3/")
-    display_trajectory_publisher = rospy.Publisher("/my_gen3/" + 'move_group/display_planned_path',
-                                                   moveit_msgs.msg.DisplayTrajectory,
-                                                   queue_size=20)
-    if is_gripper_present:
-        gripper_group_name = "gripper"
-        gripper_group = moveit_commander.MoveGroupCommander(gripper_group_name, ns="/my_gen3/")
-    rospy.loginfo("Initializing node in namespace " + "/my_gen3/")
+    rospy.loginfo('------Initializing Kinova gen3 arm with MoveIt-------')
+    move_gen3 = MoveMyGen3()
+    success = move_gen3.is_init_success
+    # moveit_commander.roscpp_initialize(sys.argv)
+    # is_gripper_present = rospy.get_param("/my_gen3/" + "is_gripper_present", False)
+    # if is_gripper_present:
+    #     gripper_joint_names = rospy.get_param("/my_gen3/" + "gripper_joint_names", [])
+    #     gripper_joint_name = gripper_joint_names[0]
+    # else:
+    #     gripper_joint_name = ""
+    #     degrees_of_freedom = rospy.get_param("/my_gen3/" + "degrees_of_freedom", 7)
+    # # Create the MoveItInterface necessary objects
+    # arm_group_name = "arm"
+    # robot = moveit_commander.RobotCommander("robot_description")
+    # scene = moveit_commander.PlanningSceneInterface(ns="/my_gen3/")
+    # arm_group = moveit_commander.MoveGroupCommander(arm_group_name, ns="/my_gen3/")
+    # display_trajectory_publisher = rospy.Publisher("/my_gen3/" + 'move_group/display_planned_path',
+    #                                                moveit_msgs.msg.DisplayTrajectory,
+    #                                                queue_size=20)
+    # if is_gripper_present:
+    #     gripper_group_name = "gripper"
+    #     gripper_group = moveit_commander.MoveGroupCommander(gripper_group_name, ns="/my_gen3/")
+    # rospy.loginfo("Initializing node in namespace " + "/my_gen3/")
     # --------------------------- add collision boxes to the planning scene -----------------------
-    box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "base_link"
-    box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.x = 0.4
-    box_pose.pose.position.y = 0.0
-    box_pose.pose.position.z = -0.2
-    scene.add_box('table', box_pose, size=(1, 2, 0.4))
-    # ------------------------ local scene scanning -----------------------
-    current_dir = os.getcwd()
-    views_save_dir = os.path.join(current_dir, 'saved_views')
-    print('-----------main loop started-------------')
-    quit_ = False
-    while not rospy.is_shutdown():
-        if quit_:
-            break
-        scene_img_window = 'Scene_image'
-        cv2.namedWindow(scene_img_window)
-        cv2.setMouseCallback(scene_img_window, scene_img_click)
-        # moved2object = False
-        poi_in_rob = None
-        # ---------------------------stage 1 move close to the object of interest ----------------------
+    if success:
+        rospy.loginfo('ROS node for Kinova gen3 arm with MoveIt initialization complete.')
+        move_gen3.add_collision_box('base_table', None, None)
+        # ------------------------ local scene scanning -----------------------
+        current_dir = os.getcwd()
+        views_save_dir = os.path.join(current_dir, 'saved_views')
+
+        rospy.loginfo('Semi autonomous grasping system ready for action.')
+        # ---------- stage 1 move close to the object of interest ----------
         stage1_complete = False
-        while not stage1_complete:     # wait for the user to select the object of interest
+        poi_in_rob = None
+        rospy.loginfo('stage 1 - select object for grasping')
+        while not (stage1_complete or rospy.is_shutdown()):     # loop 1
+            # GUI set up
+            scene_img_window = 'Scene_image'
+            cv2.namedWindow(scene_img_window)
+            cv2.setMouseCallback(scene_img_window, scene_img_click)
+            # ------ get eye-to-hand camera image -----
             frames = rs_pipe.wait_for_frames()
             # Get aligned frames
             aligned_frames = rs_align.process(frames)
@@ -211,74 +211,168 @@ def main():
             color_frame = aligned_frames.get_color_frame()
             # Validate that both frames are valid
             if not aligned_depth_frame or not color_frame:
-                continue
-            # depth_image = np.asanyarray(aligned_depth_frame.get_data())
+                continue    # back to loop 1 starting point
             color_image = np.asanyarray(color_frame.get_data())
             color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
             cv2.imshow(scene_img_window, color_image)
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
-                quit_ = True
-                break
+                break   # exit loop 1 -> terminate the grasping system
+            # ----- user select object -----
             if SCENE_IMG_CLICKED_AT != (-1, -1):
-                print '--------------------------------------'
-                print 'mouse clicked at: ', SCENE_IMG_CLICKED_AT
+                cv2.circle(color_image, SCENE_IMG_CLICKED_AT, 4, (0, 255, 0), -1)
+                cv2.circle(color_image, SCENE_IMG_CLICKED_AT, 5, (0, 0, 255), 1)
+                cv2.imshow(scene_img_window, color_image)
+                rospy.loginfo('Press e to confirm selection, press any other key to cancel selection')
+                key = cv2.waitKey(0) & 0xFF
+                if key != ord('e'):
+                    rospy.loginfo('Selection cancelled')
+                    SCENE_IMG_CLICKED_AT = (-1, -1)
+                    continue    # go back to loop 1 starting point
+                # if user confirmed selection
+                cv2.destroyAllWindows()
+                rospy.loginfo('--------------------------------------')
+                print('mouse clicked at: ', SCENE_IMG_CLICKED_AT)
                 distance = aligned_depth_frame.get_distance(SCENE_IMG_CLICKED_AT[0], SCENE_IMG_CLICKED_AT[1])
-                print 'The depth at clicked point is: ', distance
+                print('The depth at clicked point is: ', distance)
                 poi = [float(SCENE_IMG_CLICKED_AT[0]), float(SCENE_IMG_CLICKED_AT[1])]
                 poi_in_cam = realsense.rs2_deproject_pixel_to_point(rs_color_intrinsics, poi, distance)
-                print 'Clicked 3d location relative to camera: ', poi_in_cam
+                print('Clicked 3d location relative to camera: ', poi_in_cam)
                 poi_in_cam_q = Quaternion(0.0, poi_in_cam[0], poi_in_cam[1], poi_in_cam[2])
-                print 'Clicked 3d location relative to camera as quaternion: ', poi_in_cam_q
+                print('Clicked 3d location relative to camera as quaternion: ', poi_in_cam_q)
                 cam_in_rob_pose_r_q_conj = cam_in_robot_pose_r_q.conjugate
                 poi_in_cam_in_rob = cam_in_robot_pose_r_q * poi_in_cam_q * cam_in_rob_pose_r_q_conj
                 poi_in_rob = cam_in_robot_pose_p_q + poi_in_cam_in_rob
-                print 'Clicked point 3D locatioin relative to robot: ', (poi_in_rob.x, poi_in_rob.y, poi_in_rob.z)
-                # !----!!!!!--- replace this section with user controlled grasp orientation selection ---!!!!!----!
-                # go to default initial pre-grasp pose
-                default_pose_params = [[np.pi, np.pi/4, pre_d],
-                                       [np.pi, np.pi/2, pre_d],
-                                       [0.75*np.pi, np.pi/2, pre_d],
-                                       [1.25*np.pi, np.pi/2, pre_d],
-                                       [1.25*np.pi, np.pi/4, pre_d]]
-                arm_group.set_max_velocity_scaling_factor(0.5)
-                arm_group.set_goal_position_tolerance(0.01)
-                arm_group.set_goal_orientation_tolerance(0.1)
-                auto_reach_complete = False
-                while not auto_reach_complete:
-                    for pose_param in default_pose_params:
-                        default_pose = view_param2cart_pose(poi_in_rob, pose_param)
-                        arm_group.set_pose_target(default_pose)
-                        plan = arm_group.plan()
-                        if plan.joint_trajectory.points:
-                            user_confirm = raw_input("execute planed trajectory? (y/n)")
-                            if user_confirm == 'y':
-                                arm_group.execute(plan, wait=True)
-                                arm_group.stop()
-                                arm_group.clear_pose_targets()
-                                auto_reach_complete = True
-                                break
+                print('Clicked point 3D location relative to robot: ', (poi_in_rob.x, poi_in_rob.y, poi_in_rob.z))
+                SCENE_IMG_CLICKED_AT = (-1, -1)
+                # ----- go to default initial pre-grasp pose -----
+                default_pose_params = [[np.pi, np.pi / 4, pre_d],
+                                       [np.pi, np.pi / 2, pre_d],
+                                       [0.75 * np.pi, np.pi / 2, pre_d],
+                                       [1.25 * np.pi, np.pi / 2, pre_d],
+                                       [1.25 * np.pi, np.pi / 4, pre_d]]
 
-                if auto_reach_complete:
-                    user_adjust_complete = False
-                    # user adjust grasp direction
-                    # while not user_adjust_complete:
-
-
-
-                # !----!!!!!--- --------------------------------------------------------------------- ---!!!!!----!
-        # -------------------------------------- stage 2 close up scan ---------------------------------
-        cv2.destroyAllWindows()
+                for pose_param in default_pose_params:  # loop 2
+                    print('Testing default pre-grasp pose reachability: ', pose_param)
+                    default_pose = view_param2cart_pose(poi_in_rob, pose_param)
+                    reachability, plan = move_gen3.plan_to_cartesian_pose(default_pose, (0.01, 0.1), 0.5)
+                    if reachability == 1:
+                        user_confirm = raw_input("Execute planed trajectory? (y/[n])")
+                        if user_confirm == 'y':
+                            move_gen3.execute_trajectory_plan(plan)
+                            stage1_complete = True
+                            break   # exit loop 2
+        # !----!!!!!--- --------------------------------------------!!!!!----!
+        # ---------- stage 2 close up scan ----------
+        rospy.loginfo('stage 2 - Grasp direction adjustment and local scene scanning')
         print(poi_in_rob)
-        raw_input('Waiting for grasp direction adjustment...')
-        if poi_in_rob is not None and False:
-            upside_thetas = [0.0, 0.174, 0.348, 0.522]
-            downside_thetas = [1.57, 1.39, 1.22]
-            phis_1 = [1.74, 2.356]
-            phis_2 = [4.53, 3.927]
-            phis = [1.74, 2.356, np.pi, 4.53, 3.927]
-            current_pose = arm_group.get_current_pose().pose
-            current_pose_param = cartesian2spherical_coords(current_pose.position)
+        x0 = poi_in_rob.x
+        y0 = poi_in_rob.y
+        z0 = poi_in_rob.z
+        print(x0, y0, z0)
+        n_xy0 = (x0 ** 2 + y0 ** 2) ** 0.5
+
+        c0 = x0 / n_xy0
+        s0 = y0 / n_xy0
+        t_b0 = np.array([[c0, -s0, 0, x0],
+                         [s0, c0, 0, y0],
+                         [0, 0, 1, z0],
+                         [0, 0, 0, 1]])
+        t_0b = np.array([[c0, s0, 0, -(x0 * c0 + y0 * s0)],
+                         [-s0, c0, 0, x0 * s0 - y0 * c0],
+                         [0, 0, 1, -z0],
+                         [0, 0, 0, 1]])
+        twist_command = kortex_driver.msg.TwistCommand()
+        twist_command.reference_frame = 3
+        stop_command = std_Empty()
+        # ----------------- user interface ---------------------
+        pygame.init()
+        # fps = 40
+        # fpsclock = pygame.time.Clock()
+        screen = pygame.display.set_mode((640, 480))
+        pygame.display.set_caption("Grasp Direction Control Input")
+        arrow_img = pygame.image.load('arrow.png')
+        white = (255, 255, 255)
+        rate = rospy.Rate(40)
+        rospy.loginfo('Use arrow keys to adjust robot grasping orientation, press ESC to exit')
+        while not rospy.is_shutdown():
+            # ------------------ default velocity ----------------------
+            phi_dot = 0.0
+            theta_dot = 0.0
+            stop = True
+            # ------------------ user interface --------------------------
+            # ------------ hand camera view
+            screen.fill(white)
+            # print('color image size: ', color_img.shape)
+            # print(color_img)
+            color_display_img = pygame.surfarray.make_surface(color_img)
+            color_display_img = pygame.transform.rotate(color_display_img, 90)
+            color_display_img = pygame.transform.flip(color_display_img, False, True)
+            screen.blit(color_display_img, (0, 0))
+
+            for eve in pygame.event.get():
+                if eve.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            up_arrow_img = arrow_img.copy()
+            key_input = pygame.key.get_pressed()
+            unit_angular_velocity = 4 * np.pi / 180
+            if key_input[pygame.K_LEFT]:
+                phi_dot = -unit_angular_velocity
+                left_arrow_img = pygame.transform.rotate(up_arrow_img, 90)
+                screen.blit(left_arrow_img, (0, 190))
+                stop = False
+            if key_input[pygame.K_UP]:
+                theta_dot = unit_angular_velocity
+                screen.blit(up_arrow_img, (270, 0))
+                stop = False
+            if key_input[pygame.K_RIGHT]:
+                phi_dot = unit_angular_velocity
+                right_arrow_img = pygame.transform.rotate(up_arrow_img, -90)
+                screen.blit(right_arrow_img, (520, 190))
+                stop = False
+            if key_input[pygame.K_DOWN]:
+                theta_dot = -unit_angular_velocity
+                down_arrow_img = pygame.transform.rotate(up_arrow_img, 180)
+                screen.blit(down_arrow_img, (270, 360))
+                stop = False
+            if key_input[pygame.K_ESCAPE]:
+                pygame.quit()
+                sys.exit()
+            pygame.display.update()
+            # --------------------------------------------------------------
+            # ---------------------- calculate velocity command -----------------------
+            if stop:
+                stop_command_pub.publish(stop_command)
+            else:
+                current_p = move_gen3.arm_group.get_current_pose().pose.position
+                current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+                current_p_0 = np.matmul(t_0b, current_p_b).flatten()
+                current_spherical_coords = cartesian2spherical_coords(current_p_0)
+                print(current_spherical_coords)
+                j__63 = jacobian_spherical2cartesian(c0, s0, current_spherical_coords, angle_representation='radians')
+                twist__61 = np.matmul(j__63, np.array([[phi_dot], [theta_dot], [0.0]]))
+                # print('velocity command')
+                # fpsclock.tick(fps)
+                twist_command.twist.linear_x = twist__61[0, 0]
+                twist_command.twist.linear_y = twist__61[1, 0]
+                twist_command.twist.linear_z = twist__61[2, 0]
+                twist_command.twist.angular_x = twist__61[3, 0]
+                twist_command.twist.angular_y = twist__61[4, 0]
+                twist_command.twist.angular_z = twist__61[5, 0]
+                # print(twist_command)
+                twist_command_pub.publish(twist_command)
+            rate.sleep()
+
+        # if poi_in_rob is not None and False:
+        #     upside_thetas = [0.0, 0.174, 0.348, 0.522]
+        #     downside_thetas = [1.57, 1.39, 1.22]
+        #     phis_1 = [1.74, 2.356]
+        #     phis_2 = [4.53, 3.927]
+        #     phis = [1.74, 2.356, np.pi, 4.53, 3.927]
+        #     current_pose = arm_group.get_current_pose().pose
+        #     current_pose_param = cartesian2spherical_coords(current_pose.position)
 
             # up side view pose
             # for theta_i in upside_thetas:
@@ -374,7 +468,7 @@ def main():
                 # cv2.imwrite(os.path.join(views_save_dir, 'depth', str(j) + '.png'), depth_img)
                 # np.savetxt(os.path.join(views_save_dir, str(j) + '_pose.txt'), current_pose_array, fmt='%.6f')
                 # cv2.waitKey(1)
-            cv2.destroyAllWindows()
+            # cv2.destroyAllWindows()
         # if moved2object:
         #     pc_file_index = -1
         #     while True:
