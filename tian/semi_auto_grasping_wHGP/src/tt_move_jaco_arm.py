@@ -319,6 +319,6 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
-    # task_success = main()
-    # print('Task execution successful: ', task_success)
+    # test()
+    task_success = main()
+    print('Task execution successful: ', task_success)
