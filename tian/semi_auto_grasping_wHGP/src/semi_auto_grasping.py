@@ -9,11 +9,10 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Empty as std_Empty
 # from sensor_msgs.msg import PointCloud2, PointField
 from cv_bridge import CvBridge
-from utils import view_param2cart_pose, cartesian2spherical_coords
+from utils import view_param2cart_pose, cartesian2spherical_coords, augment_waypoints
 from tt_move_gen3 import MoveMyGen3, jacobian_spherical2cartesian
 import pygame
 from tt_pygame_util import user_input_confirm_or_cancel_gui
-
 
 # os.environ["ROS_NAMESPACE"] = "/my_gen3/"
 bridge = CvBridge()
@@ -40,9 +39,9 @@ def ros_pose_from_trans_matrix(_trans_matrix):
     return pose
 
 
-def generate_scanning_waypoints(_poi, waypoints_params):
-    waypoints = []
-    n_xy = (_poi.x**2 + _poi.y**2)**0.5
+def trajectory_params2poses(_poi, waypoints_params):
+    scanning_poses = []
+    n_xy = (_poi.x ** 2 + _poi.y ** 2) ** 0.5
     cos_t = _poi.x / n_xy
     sin_t = _poi.y / n_xy
     # print(cos_t, sin_t)
@@ -61,14 +60,16 @@ def generate_scanning_waypoints(_poi, waypoints_params):
         p_ix = np.cos(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
         p_iy = np.sin(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
         p_iz = np.cos(waypoints_params[i, 1]) * waypoints_params[i, 2]
-        n_pi = (p_ix**2 + p_iy**2 + p_iz**2)**0.5
+        n_pi = (p_ix ** 2 + p_iy ** 2 + p_iz ** 2) ** 0.5
         vz_i = - np.array([p_ix, p_iy, p_iz]) / n_pi
+
         vx_i = np.array([0.0, 1.0, 0.0])
         if vz_i[0] != 0.0 or vz_i[1] != 0.0:
-            n_xxy = (vz_i[0]**2 + vz_i[1]**2)**0.5
+            n_xxy = (vz_i[0] ** 2 + vz_i[1] ** 2) ** 0.5
             vx_i[0] = - vz_i[1] / n_xxy
             vx_i[1] = vz_i[0] / n_xxy
             vx_i[2] = 0.0
+
         vy_i = np.cross(vz_i, vx_i)
         T_oi = np.zeros((4, 4))
         T_oi[:3, 0] = vx_i
@@ -83,8 +84,8 @@ def generate_scanning_waypoints(_poi, waypoints_params):
         # print(T_oi)
         # print(T_bi)
         pose_i = ros_pose_from_trans_matrix(T_bi)
-        waypoints.append(pose_i)
-    return waypoints
+        scanning_poses.append(pose_i)
+    return scanning_poses
 
 
 def color_callback(color_msg):
@@ -129,7 +130,7 @@ def main():
     # ------------------------------------ parameters -----------------------------------------
     rospy.loginfo('--------------Initializing parameters-------------')
     global hand_cam_color, hand_cam_depth  # xyz, rgb
-    pre_d = 0.25    # in meter
+    pre_d = 0.25  # in meter
     # ---------------- eye-to-hand camera pose in robot base frame -----------------
     # (0.703286572, -0.479129947, 0.407774383, Quaternion(0.446737, -0.846885, -0.243772, 0.155097))
     # position as quaternion 0 x y z
@@ -177,6 +178,8 @@ def main():
     if success:
         rospy.loginfo('ROS node for Kinova gen3 arm with MoveIt initialization complete.')
         move_gen3.add_collision_box('base_table', None, None)
+        move_gen3.add_collision_box('back_block', (0.1, 2, 1), (-0.25, 0.0, 0.5))
+        move_gen3.reach_named_position('home', 1)
         # ------------------------ local scene scanning -----------------------
         current_dir = os.getcwd()
         views_save_dir = os.path.join(current_dir, 'saved_views')
@@ -186,7 +189,7 @@ def main():
         poi_in_rob = None
         rospy.loginfo('stage 1 - select object for grasping')
         iter_counter = 0
-        while not (stage1_complete or rospy.is_shutdown()):     # loop 1
+        while not (stage1_complete or rospy.is_shutdown()):  # loop 1
             user_selected_point = (-1, -1)
             # ------ get eye-to-hand camera image -----
             frames = rs_pipe.wait_for_frames()
@@ -196,7 +199,7 @@ def main():
             color_frame = aligned_frames.get_color_frame()
             # Validate that both frames are valid
             if not aligned_depth_frame or not color_frame:
-                continue    # back to loop 1 starting point
+                continue  # back to loop 1 starting point
             body_cam_color = np.asanyarray(color_frame.get_data())
             # body_cam_color = cv2.cvtColor(body_cam_color, cv2.COLOR_RGB2BGR)
             # pygame GUI display image
@@ -240,11 +243,13 @@ def main():
                 poi_in_rob = cam_in_robot_pose_p_q + poi_in_cam_in_rob
                 print('Clicked point 3D location relative to robot: ', (poi_in_rob.x, poi_in_rob.y, poi_in_rob.z))
                 # ----- go to default initial pre-grasp pose -----
-                default_pose_params = [[np.pi, np.pi / 4, pre_d],
+                default_pose_params = [[np.pi, 0.0, pre_d],
                                        [np.pi, np.pi / 2, pre_d],
-                                       [0.75 * np.pi, np.pi / 2, pre_d],
                                        [1.25 * np.pi, np.pi / 2, pre_d],
-                                       [1.25 * np.pi, np.pi / 4, pre_d]]
+                                       [0.75 * np.pi, np.pi / 2, pre_d],
+                                       [np.pi, np.pi / 4, pre_d],
+                                       [1.25 * np.pi, np.pi / 4, pre_d],
+                                       [0.75 * np.pi, np.pi / 4, pre_d]]
 
                 for count, pose_param in enumerate(default_pose_params, 1):  # loop 2
                     # ------------------------- GUI update
@@ -256,7 +261,7 @@ def main():
                     # ------------------------------------
                     # print('Testing default pre-grasp pose reachability: ', count, pose_param)
                     default_pose = view_param2cart_pose(poi_in_rob, pose_param)
-                    reachability, plan = move_gen3.plan_to_cartesian_pose(default_pose, (0.01, 0.1), 0.5)
+                    reachability, plan = move_gen3.plan_to_cartesian_pose(default_pose, 0.5)
                     if reachability == 1:
                         # ------------------------- GUI update
                         screen.blit(scene_img, (0, 0))
@@ -265,7 +270,7 @@ def main():
                                            True, (200, 200, 0))
                         screen.blit(text, (100, 280))
                         user_confirmed = user_input_confirm_or_cancel_gui(screen, button_w, button_h,
-                                                                          640, 380, -button_h/2, button_gap)
+                                                                          640, 380, -button_h / 2, button_gap)
                         # ------------------------------------
                         if user_confirmed:
                             # ------------------------- GUI update
@@ -277,7 +282,7 @@ def main():
                             # ------------------------------------
                             move_gen3.execute_trajectory_plan(plan)
                             stage1_complete = True
-                            break   # exit loop 2
+                            break  # exit loop 2
                 iter_counter = 0
             else:
                 pygame.display.update()
@@ -286,6 +291,7 @@ def main():
         # !----!!!!!--- --------------------------------------------!!!!!----!
         # ---------- stage 2 close up scan ----------
         rospy.loginfo('stage 2 - Grasp direction adjustment and local scene scanning')
+        # ------------- robot velocity control parameters
         # print(poi_in_rob)
         x0 = poi_in_rob.x
         y0 = poi_in_rob.y
@@ -302,16 +308,16 @@ def main():
         twist_command.reference_frame = 3
         stop_command = std_Empty()
 
-        rospy.loginfo('Use arrow keys to adjust robot grasping orientation, press ESC to exit')
         # --------------GUI
         screen.fill(white)
-        text = font.render("Use arrow keys to adjust grasp direction.",
+        text = font.render("Use arrow keys to adjust grasp direction. Press e to confirm.",
                            True, (0, 0, 200))
-        screen.blit(text, (365, 70))
+        screen.blit(text, (270, 70))
         hand_cam_color_dx = 320
         hand_cam_color_dy = 120
         # ----------------
-        while not rospy.is_shutdown():
+        stage2_complete = False
+        while not (rospy.is_shutdown() or stage2_complete):
             # ------------------ default velocity ----------------------
             phi_dot = 0.0
             theta_dot = 0.0
@@ -333,36 +339,41 @@ def main():
             if key_input[pygame.K_LEFT]:
                 phi_dot = -unit_angular_velocity
                 left_arrow_img = pygame.transform.rotate(up_arrow_img, 90)
-                screen.blit(left_arrow_img, (hand_cam_color_dx, 190+hand_cam_color_dy))
+                screen.blit(left_arrow_img, (hand_cam_color_dx, 190 + hand_cam_color_dy))
                 stop = False
             if key_input[pygame.K_UP]:
                 theta_dot = unit_angular_velocity
-                screen.blit(up_arrow_img, (270+hand_cam_color_dx, hand_cam_color_dy))
+                screen.blit(up_arrow_img, (270 + hand_cam_color_dx, hand_cam_color_dy))
                 stop = False
             if key_input[pygame.K_RIGHT]:
                 phi_dot = unit_angular_velocity
                 right_arrow_img = pygame.transform.rotate(up_arrow_img, -90)
-                screen.blit(right_arrow_img, (520+hand_cam_color_dx, 190+hand_cam_color_dy))
+                screen.blit(right_arrow_img, (520 + hand_cam_color_dx, 190 + hand_cam_color_dy))
                 stop = False
             if key_input[pygame.K_DOWN]:
                 theta_dot = -unit_angular_velocity
                 down_arrow_img = pygame.transform.rotate(up_arrow_img, 180)
-                screen.blit(down_arrow_img, (270+hand_cam_color_dx, 360+hand_cam_color_dy))
+                screen.blit(down_arrow_img, (270 + hand_cam_color_dx, 360 + hand_cam_color_dy))
                 stop = False
             if key_input[pygame.K_ESCAPE]:
                 pygame.quit()
                 sys.exit()
+            if key_input[pygame.K_e]:
+                stage2_complete = True
             pygame.display.update()
             # --------------------------------------------------------------
             # ---------------------- calculate velocity command -----------------------
             if stop:
                 stop_command_pub.publish(stop_command)
             else:
-                current_p = move_gen3.arm_group.get_current_pose().pose.position
+                current_pose = move_gen3.arm_group.get_current_pose().pose
+                current_p = current_pose.position
                 current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
                 current_p_0 = np.matmul(t_0b, current_p_b).flatten()
                 current_spherical_coords = cartesian2spherical_coords(current_p_0)
                 print(current_spherical_coords)
+                # print([current_p.x, current_p.y, current_p.z, current_pose.orientation.x, current_pose.orientation.y,
+                #        current_pose.orientation.z, current_pose.orientation.w])
                 j__63 = jacobian_spherical2cartesian(c0, s0, current_spherical_coords, angle_representation='radians')
                 twist__61 = np.matmul(j__63, np.array([[phi_dot], [theta_dot], [0.0]]))
                 # print('velocity command')
@@ -377,6 +388,108 @@ def main():
                 twist_command_pub.publish(twist_command)
             rate.sleep()
 
+        if stage2_complete:
+            rospy.loginfo('Stage 3 - Local object scanning for object silhouette extractioin '
+                          'and neural network grasp detection')
+            # get current robot pose parameters
+            current_p = move_gen3.arm_group.get_current_pose().pose.position
+            current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+            current_p_0 = np.matmul(t_0b, current_p_b).flatten()
+            current_spherical_coords = cartesian2spherical_coords(current_p_0)
+            rospy.loginfo('Current robot position in object spherical coordinate system:')
+            print(current_spherical_coords)
+            pre_grasp_pose_params = np.copy(current_spherical_coords)
+            # 1. Find scanning view poses
+            # left-most view
+            # middle view
+            # right-most view
+            # top view
+            # back to pre-grasp view
+            # check if pre-grasp pose is close to top scan view pose
+            if current_spherical_coords[1] > 0.174:
+                up_theta = 0.0
+                up_view_found = False
+            else:
+                up_theta = pre_grasp_pose_params[1]
+                up_view_found = True
+                print('pre-grasp pose close to top view pose')
+
+            while not up_view_found and up_theta < current_spherical_coords[1]:
+                view_params = [current_spherical_coords[0], up_theta, pre_d]
+                view_pose = view_param2cart_pose(poi_in_rob, view_params)
+                reachability, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.5, (0.05, 0.1))
+                if reachability == 1:
+                    user_confirmation = raw_input('Go to view pose [y]/n ?')
+                    if user_confirmation == 'n':
+                        pass
+                    else:
+                        up_view_found = move_gen3.execute_trajectory_plan(plan)
+                        # take RGBD images after reaching the view pose
+                        print('up view found: ', up_view_found)
+                        # get current robot pose parameters
+                        current_p = move_gen3.arm_group.get_current_pose().pose.position
+                        current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+                        current_p_0 = np.matmul(t_0b, current_p_b).flatten()
+                        current_spherical_coords = cartesian2spherical_coords(current_p_0)
+                        rospy.loginfo('Current robot position in object spherical coordinate system:')
+                        print(current_spherical_coords)
+                        break
+                # traj2view_params = augment_waypoints([current_spherical_coords, view_params], 1)
+                # traj2view_poses = trajectory_params2poses(poi_in_rob, traj2view_params)
+                # print('View pose: ', view_params)
+                # print('Trajectory to view pose: ', traj2view_poses)
+                # traj_plan, traj_fit = move_gen3.plan_trajectory_from_waypoints(traj2view_poses,
+                #                                                                step_size=0.005,
+                #                                                                jump_threshold=1.5,
+                #                                                                display_trajectory=True)
+                # print('Trajectory to view pose fitness: ', traj_fit)
+                # user_confirmation = raw_input('Go to view pose [y]/n ?')
+                # if user_confirmation == 'n':
+                #     pass
+                # else:
+                #     up_view_found = move_gen3.execute_trajectory_plan(traj_plan)
+                #     # take RGBD images after reaching the view pose
+                #     print('up view found: ', up_view_found)
+                #     break
+                up_theta += 0.174
+
+                # view_pose_i = view_param2cart_pose(poi_in_rob, view_params)
+                # # reachability_i, view_plan_i = move_gen3.plan_to_cartesian_pose(view_pose_i, 0.5, (0.05, 0.1))
+                # if reachability_i == 1:
+                #     rospy.loginfo('Reachable view pose: ')
+                #     print(view_params)
+                #     trajectory_params = scanning_trajectory_waypoint_poses(
+                #         [[np.pi, np.pi / 4, pre_d], [np.pi, theta_i, pre_d]])
+                #     # reverse_trajectory_params = scanning_trajectory_waypoint_poses(
+                #     #     [[np.pi, theta_i, pre_d], [np.pi, np.pi / 4, pre_d]])
+                #     print(trajectory_params)
+                #     # print(reverse_trajectory_params)
+                #     trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
+                #     # reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob, reverse_trajectory_params)
+                #     print(trajectory_poses)
+                #     # print(reverse_trajectory_poses)
+                #     trajectory_plan, trajectory_frac = move_gen3.plan_trajectory_from_waypoints(trajectory_poses,
+                #                                                                                 display_trajectory=True)
+                #     # print(trajectory_plan)
+                #     print(trajectory_frac)
+                #     if trajectory_frac > 0.7:
+                #         move_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
+                #         # take images
+                #         rospy.sleep(2)
+                #         # reverse_trajectory_poses[0] = move_gen3.arm_group.get_current_pose().pose
+                #         # print(reverse_trajectory_poses)
+                #         # reverse_trajectory_plan, reverse_trajectory_frac = move_gen3.plan_trajectory_from_waypoints(
+                #             # reverse_trajectory_poses,
+                #             # display_trajectory=True)
+                #         # print(reverse_trajectory_frac)
+                #         # if reverse_trajectory_frac > 0.7:
+                #         #     move_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
+                #     break
+            # 2. Go through scanning points and collect RGB-D images
+            # 3. Object point cloud registration and silhouette extraction (another script)
+            # 4. Neural network grasp detection (another script)
+
 
 if __name__ == "__main__":
     main()
+

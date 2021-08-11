@@ -211,7 +211,6 @@ def cartesian2spherical_coords(x_):
 
 
 def main():
-    from semi_auto_grasping import generate_scanning_waypoints
     from pyquaternion import Quaternion
     move_my_gen3 = MoveMyGen3()
     success = move_my_gen3.is_init_success

@@ -96,11 +96,11 @@ class MoveMyGen3(object):
         except:
             return False
 
-    def plan_trajectory_from_waypoints(self, waypoints, display_trajectory=False):
+    def plan_trajectory_from_waypoints(self, waypoints, step_size=0.01, jump_threshold=0.0, display_trajectory=False):
         # We want the Cartesian path to be interpolated at a resolution of 5 cm
         # which is why we will specify 0.05 as the eef_step in Cartesian
         # translation.  We will disable the jump threshold by setting it to 0.0
-        (traj_plan, traj_fraction) = self.arm_group.compute_cartesian_path(waypoints, 0.05, 0.0)
+        (traj_plan, traj_fraction) = self.arm_group.compute_cartesian_path(waypoints, step_size, jump_threshold)
         if display_trajectory:
             traj_visualize = moveit_msgs.msg.DisplayTrajectory()
             traj_visualize.trajectory_start = self.robot.get_current_state()
@@ -109,11 +109,12 @@ class MoveMyGen3(object):
         return traj_plan, traj_fraction
 
     def execute_trajectory_plan(self, trajectory_msg, wait=True):
-        self.arm_group.execute(trajectory_msg, wait=wait)
+        success = self.arm_group.execute(trajectory_msg, wait=wait)
         self.arm_group.stop()
         self.arm_group.clear_pose_targets()
+        return success
 
-    def plan_to_cartesian_pose(self, pose, tolerance, velocity_scale):
+    def plan_to_cartesian_pose(self, pose, velocity_scale, tolerance=(0.01, 0.1)):
         self.arm_group.set_goal_position_tolerance(tolerance[0])
         self.arm_group.set_goal_orientation_tolerance(tolerance[1])  # 0.1 rad => 5.73 degrees
         self.arm_group.set_max_velocity_scaling_factor(velocity_scale)
@@ -126,15 +127,16 @@ class MoveMyGen3(object):
         else:
             return 1, plan
 
-    def add_collision_box(self, box_name, box_pose, box_size):
+    def add_collision_box(self, box_name, box_size, box_position):
         if box_name == "base_table":
-            box_pose = geometry_msgs.msg.PoseStamped()
-            box_pose.header.frame_id = "base_link"
-            box_pose.pose.orientation.w = 1.0
-            box_pose.pose.position.x = 0.4
-            box_pose.pose.position.y = 0.0
-            box_pose.pose.position.z = -0.2
+            box_position = [0.4, 0.0, -0.2]
             box_size = (1, 2, 0.4)
+        box_pose = geometry_msgs.msg.PoseStamped()
+        box_pose.header.frame_id = "base_link"
+        box_pose.pose.orientation.w = 1.0
+        box_pose.pose.position.x = box_position[0]
+        box_pose.pose.position.y = box_position[1]
+        box_pose.pose.position.z = box_position[2]
         self.scene.add_box(box_name, box_pose, box_size)
 
 
