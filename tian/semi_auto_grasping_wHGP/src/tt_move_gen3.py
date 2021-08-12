@@ -139,6 +139,12 @@ class MoveMyGen3(object):
         box_pose.pose.position.z = box_position[2]
         self.scene.add_box(box_name, box_pose, box_size)
 
+    def get_current_pose_as_list(self):
+        current_pose = self.arm_group.get_current_pose().pose
+        return [current_pose.position.x, current_pose.position.y, current_pose.position.z,
+                current_pose.orientation.w, current_pose.orientation.x,
+                current_pose.orientation.y, current_pose.orientation.z]
+
 
 def jacobian_spherical2cartesian(_cos_a, _sin_a, spherical_coordinates_, angle_representation='radians'):
     phi = spherical_coordinates_[0]

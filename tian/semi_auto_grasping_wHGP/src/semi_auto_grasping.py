@@ -1,4 +1,5 @@
 import os
+from cv2 import cv2
 import rospy
 import pyrealsense2 as realsense
 import numpy as np
@@ -86,6 +87,13 @@ def trajectory_params2poses(_poi, waypoints_params):
         pose_i = ros_pose_from_trans_matrix(T_bi)
         scanning_poses.append(pose_i)
     return scanning_poses
+
+
+def get_current_spherical_coords(robot_control, t_0b__):
+    current_p = robot_control.arm_group.get_current_pose().pose.position
+    current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+    current_p_0 = np.matmul(t_0b__, current_p_b).flatten()
+    return cartesian2spherical_coords(current_p_0)
 
 
 def color_callback(color_msg):
@@ -366,11 +374,11 @@ def main():
             if stop:
                 stop_command_pub.publish(stop_command)
             else:
-                current_pose = move_gen3.arm_group.get_current_pose().pose
-                current_p = current_pose.position
-                current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
-                current_p_0 = np.matmul(t_0b, current_p_b).flatten()
-                current_spherical_coords = cartesian2spherical_coords(current_p_0)
+                # current_pose = move_gen3.arm_group.get_current_pose().pose
+                # current_p = current_pose.position
+                # current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+                # current_p_0 = np.matmul(t_0b, current_p_b).flatten()
+                current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
                 print(current_spherical_coords)
                 # print([current_p.x, current_p.y, current_p.z, current_pose.orientation.x, current_pose.orientation.y,
                 #        current_pose.orientation.z, current_pose.orientation.w])
@@ -391,18 +399,59 @@ def main():
         if stage2_complete:
             rospy.loginfo('Stage 3 - Local object scanning for object silhouette extractioin '
                           'and neural network grasp detection')
+            saved_view_poses = []
             # get current robot pose parameters
-            current_p = move_gen3.arm_group.get_current_pose().pose.position
-            current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
-            current_p_0 = np.matmul(t_0b, current_p_b).flatten()
-            current_spherical_coords = cartesian2spherical_coords(current_p_0)
+            # current_p = move_gen3.arm_group.get_current_pose().pose.position
+            # current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
+            # current_p_0 = np.matmul(t_0b, current_p_b).flatten()
+            current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
             rospy.loginfo('Current robot position in object spherical coordinate system:')
             print(current_spherical_coords)
             pre_grasp_pose_params = np.copy(current_spherical_coords)
             # 1. Find scanning view poses
             # left-most view
+            d_phi_left = [-1.047, -0.523]   # 60 , 30
+            if current_spherical_coords[1] < 0.8:   # 45
+                thetas = [1.134, 0.96]
+            else:
+                thetas = [current_spherical_coords[1]]
+            for theta_i in thetas:
+                for d_phi in d_phi_left:
+                    view_params = [current_spherical_coords[0]+d_phi, theta_i, pre_d]
+                    view_pose = view_param2cart_pose(poi_in_rob, view_params)
+                    reachability, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.5, (0.05, 0.1))
+                    if reachability == 1:
+                        user_confirmation = raw_input('Go to view pose [y]/n ?')
+                        if user_confirmation == 'n':
+                            pass
+                        else:
+                            move_gen3.execute_trajectory_plan(plan)
+                            # take RGBD images after reaching the view pose
+                            current_pose = move_gen3.get_current_pose_as_list()
+                            saved_view_poses.append(current_pose)
+                            cv2.imwrite('1.png', hand_cam_color)
+                            cv2.imwrite('1_.png', hand_cam_depth)
+                            break
             # middle view
             # right-most view
+            d_phi_right = [1.047, 0.523]   # 60 , 30
+            for theta_i in thetas:
+                for d_phi in d_phi_right:
+                    view_params = [current_spherical_coords[0]+d_phi, theta_i, pre_d]
+                    view_pose = view_param2cart_pose(poi_in_rob, view_params)
+                    reachability, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.5, (0.05, 0.1))
+                    if reachability == 1:
+                        user_confirmation = raw_input('Go to view pose [y]/n ?')
+                        if user_confirmation == 'n':
+                            pass
+                        else:
+                            move_gen3.execute_trajectory_plan(plan)
+                            # take RGBD images after reaching the view pose
+                            current_pose = move_gen3.get_current_pose_as_list()
+                            saved_view_poses.append(current_pose)
+                            cv2.imwrite('2.png', hand_cam_color)
+                            cv2.imwrite('2_.png', hand_cam_depth)
+                            break
             # top view
             # back to pre-grasp view
             # check if pre-grasp pose is close to top scan view pose
