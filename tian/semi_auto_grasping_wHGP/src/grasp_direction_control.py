@@ -5,8 +5,8 @@ import sys
 from kortex_driver.msg import *
 from std_msgs.msg import Empty as std_Empty
 from sensor_msgs.msg import Image
-from tt_move_jaco_arm import MoveMyGen3
-from semi_auto_grasping import generate_scanning_waypoints
+from tt_move_gen3 import MoveMyGen3
+from semi_auto_grasping import trajectory_params2poses
 from pyquaternion import Quaternion
 from cv_bridge import CvBridge
 import cv2
@@ -90,7 +90,7 @@ if __name__ == '__main__':
                      [s0, c0, 0],
                      [0, 0, 1]])
     pre_grasp_param = np.array([[np.pi, np.pi/4, pre_d]])
-    pre_grasp_pose = generate_scanning_waypoints(Quaternion(0, x0, y0, z0), pre_grasp_param)[0]
+    pre_grasp_pose = trajectory_params2poses(Quaternion(0, x0, y0, z0), pre_grasp_param)[0]
     print(pre_grasp_pose)
     # success &= move_my_gen3.reach_cartesian_pose(pre_grasp_pose)
     current_p = move_my_gen3.arm_group.get_current_pose().pose.position

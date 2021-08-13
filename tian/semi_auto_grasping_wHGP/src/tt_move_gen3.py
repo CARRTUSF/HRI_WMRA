@@ -123,9 +123,9 @@ class MoveMyGen3(object):
         # print(plan)
         # print(plan.joint_trajectory)
         if not plan.joint_trajectory.points:
-            return 0, []
+            return False, []
         else:
-            return 1, plan
+            return True, plan
 
     def add_collision_box(self, box_name, box_size, box_position):
         if box_name == "base_table":

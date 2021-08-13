@@ -1,5 +1,7 @@
-import numpy as np
+import rospy
 import geometry_msgs.msg
+import numpy as np
+from cv2 import cv2
 from pyquaternion import Quaternion
 
 
@@ -74,6 +76,30 @@ def augment_waypoints(current_waypoints, n2add):
     return augmented_waypoints
 
 
+def test_view_params(poi_, view_params, robot_control, saved_view_poses, color_image, depth_image,
+                     color_name, depth_name, robot_velocity_scale=0.8, robot_pose_tolerance=(0.05, 0.1)):
+
+    view_pose = view_param2cart_pose(poi_, view_params)
+    reachable, plan = robot_control.plan_to_cartesian_pose(view_pose, robot_velocity_scale, robot_pose_tolerance)
+    if reachable:
+        user_confirmation = raw_input('Go to view pose [y]/n ?')
+        if user_confirmation == 'n':
+            return False, saved_view_poses
+        else:
+            goal_pose_reached = robot_control.execute_trajectory_plan(plan)
+            # take RGBD images after reaching the view pose
+            if goal_pose_reached:
+                rospy.sleep(0.5)
+                current_pose = robot_control.get_current_pose_as_list()
+                saved_view_poses.append(current_pose)
+                cv2.imwrite(color_name, cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR))
+                cv2.imwrite(depth_name, depth_image)
+                rospy.loginfo('View images captured')
+                return True, saved_view_poses
+            else:
+                return False, saved_view_poses
+    else:
+        return False, saved_view_poses
 # if __name__ == '__main__':
 #     wps = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
 #     print(add_more_waypoints(wps, 3))
