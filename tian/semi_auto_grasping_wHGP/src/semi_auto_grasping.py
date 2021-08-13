@@ -23,72 +23,6 @@ hand_cam_color = np.zeros((100, 100))
 hand_cam_depth = np.zeros((100, 100))
 
 
-def get_quaternion_pose_from_xyz_axes(x_axis, y_axis, z_axis):
-    rotation_matrix = np.array([[x_axis[0], y_axis[0], z_axis[0]],
-                                [x_axis[1], y_axis[1], z_axis[1]],
-                                [x_axis[2], y_axis[2], z_axis[2]]])
-    pose_quaternion = Quaternion(matrix=rotation_matrix)
-    return pose_quaternion
-
-
-def ros_pose_from_trans_matrix(_trans_matrix):
-    pose = geometry_msgs.msg.Pose()
-    pose.position.x = _trans_matrix[0, 3]
-    pose.position.y = _trans_matrix[1, 3]
-    pose.position.z = _trans_matrix[2, 3]
-    pose.orientation = Quaternion(matrix=_trans_matrix)
-    return pose
-
-
-def trajectory_params2poses(_poi, waypoints_params):
-    scanning_poses = []
-    n_xy = (_poi.x ** 2 + _poi.y ** 2) ** 0.5
-    cos_t = _poi.x / n_xy
-    sin_t = _poi.y / n_xy
-    # print(cos_t, sin_t)
-    T_bo = np.zeros((4, 4))
-    T_bo[0, 0] = cos_t
-    T_bo[0, 1] = -sin_t
-    T_bo[0, 3] = _poi.x
-    T_bo[1, 0] = sin_t
-    T_bo[1, 1] = cos_t
-    T_bo[1, 3] = _poi.y
-    T_bo[2, 2] = 1
-    T_bo[2, 3] = _poi.z
-    T_bo[3, 3] = 1
-    # print(T_bo)
-    for i in range(waypoints_params.shape[0]):
-        p_ix = np.cos(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
-        p_iy = np.sin(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
-        p_iz = np.cos(waypoints_params[i, 1]) * waypoints_params[i, 2]
-        n_pi = (p_ix ** 2 + p_iy ** 2 + p_iz ** 2) ** 0.5
-        vz_i = - np.array([p_ix, p_iy, p_iz]) / n_pi
-
-        vx_i = np.array([0.0, 1.0, 0.0])
-        if vz_i[0] != 0.0 or vz_i[1] != 0.0:
-            n_xxy = (vz_i[0] ** 2 + vz_i[1] ** 2) ** 0.5
-            vx_i[0] = - vz_i[1] / n_xxy
-            vx_i[1] = vz_i[0] / n_xxy
-            vx_i[2] = 0.0
-
-        vy_i = np.cross(vz_i, vx_i)
-        T_oi = np.zeros((4, 4))
-        T_oi[:3, 0] = vx_i
-        T_oi[:3, 1] = vy_i
-        T_oi[:3, 2] = vz_i
-        T_oi[0, 3] = p_ix
-        T_oi[1, 3] = p_iy
-        T_oi[2, 3] = p_iz
-        T_oi[3, 3] = 1.0
-        T_bi = np.matmul(T_bo, T_oi)
-        # print('[][][][][][]')
-        # print(T_oi)
-        # print(T_bi)
-        pose_i = ros_pose_from_trans_matrix(T_bi)
-        scanning_poses.append(pose_i)
-    return scanning_poses
-
-
 def get_current_spherical_coords(robot_control, t_0b__):
     current_p = robot_control.arm_group.get_current_pose().pose.position
     current_p_b = np.array([[current_p.x], [current_p.y], [current_p.z], [1]])
@@ -425,22 +359,7 @@ def main():
                                                                            '1.png', '1_.png')
                     if view_pose_reached:
                         break
-                    # view_pose = view_param2cart_pose(poi_in_rob, view_params)
-                    # reachable, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.8, (0.05, 0.1))
-                    # if reachable:
-                    #     user_confirmation = raw_input('Go to view pose [y]/n ?')
-                    #     if user_confirmation == 'n':
-                    #         pass
-                    #     else:
-                    #         goal_pose_reached = move_gen3.execute_trajectory_plan(plan)
-                    #         # take RGBD images after reaching the view pose
-                    #         if goal_pose_reached:
-                    #             current_pose = move_gen3.get_current_pose_as_list()
-                    #             saved_view_poses.append(current_pose)
-                    #             cv2.imwrite('1.png', cv2.cvtColor(hand_cam_color, cv2.COLOR_RGB2BGR))
-                    #             cv2.imwrite('1_.png', hand_cam_depth)
-                    #             rospy.loginfo('left view captured.')
-                    #             break
+
             # middle view
             # right-most view
             rospy.loginfo('right side:')
@@ -458,22 +377,6 @@ def main():
                                                                            '2.png', '2_.png')
                     if view_pose_reached:
                         break
-                    # view_pose = view_param2cart_pose(poi_in_rob, view_params)
-                    # reachable, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.8, (0.05, 0.1))
-                    # if reachable:
-                    #     user_confirmation = raw_input('Go to view pose [y]/n ?')
-                    #     if user_confirmation == 'n':
-                    #         pass
-                    #     else:
-                    #         goal_pose_reached = move_gen3.execute_trajectory_plan(plan)
-                    #         # take RGBD images after reaching the view pose
-                    #         if goal_pose_reached:
-                    #             current_pose = move_gen3.get_current_pose_as_list()
-                    #             saved_view_poses.append(current_pose)
-                    #             cv2.imwrite('2.png', cv2.cvtColor(hand_cam_color, cv2.COLOR_RGB2BGR))
-                    #             cv2.imwrite('2_.png', hand_cam_depth)
-                    #             rospy.loginfo('right view captured.')
-                    #             break
             # top view
             rospy.loginfo('top side:')
             # check if pre-grasp pose is close to top scan view pose
@@ -493,22 +396,6 @@ def main():
                     break
                 else:
                     up_theta += 0.174
-                # view_pose = view_param2cart_pose(poi_in_rob, view_params)
-                # reachable, plan = move_gen3.plan_to_cartesian_pose(view_pose, 0.8, (0.05, 0.1))
-                # if reachable:
-                #     user_confirmation = raw_input('Go to view pose [y]/n ?')
-                #     if user_confirmation == 'n':
-                #         pass
-                #     else:
-                #         goal_pose_reached = move_gen3.execute_trajectory_plan(plan)
-                #         # take RGBD images after reaching the view pose
-                #         if goal_pose_reached:
-                #             current_pose = move_gen3.get_current_pose_as_list()
-                #             saved_view_poses.append(current_pose)
-                #             cv2.imwrite('3.png', cv2.cvtColor(hand_cam_color, cv2.COLOR_RGB2BGR))
-                #             cv2.imwrite('3_.png', hand_cam_depth)
-                #             rospy.loginfo('Top view captured.')
-                #             break
 
             rospy.loginfo('back to pre-grasp view')
             view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, pre_grasp_pose_params, move_gen3,
@@ -519,71 +406,6 @@ def main():
             if view_pose_reached:
                 rospy.loginfo('Scanning phase complete.')
                 rospy.loginfo('Waiting for object silhouette extraction and initial grasp pose detection...')
-                # pre_grasp_pose = view_param2cart_pose(poi_in_rob, pre_grasp_pose_params)
-                # reachable, plan = move_gen3.plan_to_cartesian_pose(pre_grasp_pose, 0.8, (0.01, 0.04))
-                # if reachable:
-                #     user_confirmation = raw_input('Go to view pose [y]/n ?')
-                #     if user_confirmation == 'n':
-                #         pass
-                #     else:
-                #         goal_pose_reached = move_gen3.execute_trajectory_plan(plan)
-                #         if goal_pose_reached:
-                #             current_pose = move_gen3.get_current_pose_as_list()
-                #             saved_view_poses.append(current_pose)
-                #             cv2.imwrite('4.png', cv2.cvtColor(hand_cam_color, cv2.COLOR_RGB2BGR))
-                #             cv2.imwrite('4_.png', hand_cam_depth)
-                #             rospy.loginfo('Pre-grasp view captured.')
-
-                # traj2view_params = augment_waypoints([current_spherical_coords, view_params], 1)
-                # traj2view_poses = trajectory_params2poses(poi_in_rob, traj2view_params)
-                # print('View pose: ', view_params)
-                # print('Trajectory to view pose: ', traj2view_poses)
-                # traj_plan, traj_fit = move_gen3.plan_trajectory_from_waypoints(traj2view_poses,
-                #                                                                step_size=0.005,
-                #                                                                jump_threshold=1.5,
-                #                                                                display_trajectory=True)
-                # print('Trajectory to view pose fitness: ', traj_fit)
-                # user_confirmation = raw_input('Go to view pose [y]/n ?')
-                # if user_confirmation == 'n':
-                #     pass
-                # else:
-                #     goal_pose_reached = move_gen3.execute_trajectory_plan(traj_plan)
-                #     # take RGBD images after reaching the view pose
-                #     print('up view found: ', goal_pose_reached)
-                #     break
-
-                # view_pose_i = view_param2cart_pose(poi_in_rob, view_params)
-                # # reachability_i, view_plan_i = move_gen3.plan_to_cartesian_pose(view_pose_i, 0.5, (0.05, 0.1))
-                # if reachability_i == 1:
-                #     rospy.loginfo('Reachable view pose: ')
-                #     print(view_params)
-                #     trajectory_params = scanning_trajectory_waypoint_poses(
-                #         [[np.pi, np.pi / 4, pre_d], [np.pi, theta_i, pre_d]])
-                #     # reverse_trajectory_params = scanning_trajectory_waypoint_poses(
-                #     #     [[np.pi, theta_i, pre_d], [np.pi, np.pi / 4, pre_d]])
-                #     print(trajectory_params)
-                #     # print(reverse_trajectory_params)
-                #     trajectory_poses = generate_scanning_waypoints(poi_in_rob, trajectory_params)
-                #     # reverse_trajectory_poses = generate_scanning_waypoints(poi_in_rob, reverse_trajectory_params)
-                #     print(trajectory_poses)
-                #     # print(reverse_trajectory_poses)
-                #     trajectory_plan, trajectory_frac = move_gen3.plan_trajectory_from_waypoints(trajectory_poses,
-                #                                                                                 display_trajectory=True)
-                #     # print(trajectory_plan)
-                #     print(trajectory_frac)
-                #     if trajectory_frac > 0.7:
-                #         move_gen3.execute_trajectory_plan(trajectory_plan, wait=True)
-                #         # take images
-                #         rospy.sleep(2)
-                #         # reverse_trajectory_poses[0] = move_gen3.arm_group.get_current_pose().pose
-                #         # print(reverse_trajectory_poses)
-                #         # reverse_trajectory_plan, reverse_trajectory_frac = move_gen3.plan_trajectory_from_waypoints(
-                #             # reverse_trajectory_poses,
-                #             # display_trajectory=True)
-                #         # print(reverse_trajectory_frac)
-                #         # if reverse_trajectory_frac > 0.7:
-                #         #     move_gen3.execute_trajectory_plan(reverse_trajectory_plan, wait=True)
-                #     break
 
             # 3. Object point cloud registration and silhouette extraction (another script)
             # 4. Neural network grasp detection (another script)

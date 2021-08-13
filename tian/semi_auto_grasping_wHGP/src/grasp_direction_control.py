@@ -6,7 +6,7 @@ from kortex_driver.msg import *
 from std_msgs.msg import Empty as std_Empty
 from sensor_msgs.msg import Image
 from tt_move_gen3 import MoveMyGen3
-from semi_auto_grasping import trajectory_params2poses
+from utils import trajectory_params2poses
 from pyquaternion import Quaternion
 from cv_bridge import CvBridge
 import cv2

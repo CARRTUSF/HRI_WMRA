@@ -76,6 +76,63 @@ def augment_waypoints(current_waypoints, n2add):
     return augmented_waypoints
 
 
+def get_quaternion_pose_from_xyz_axes(x_axis, y_axis, z_axis):
+    rotation_matrix = np.array([[x_axis[0], y_axis[0], z_axis[0]],
+                                [x_axis[1], y_axis[1], z_axis[1]],
+                                [x_axis[2], y_axis[2], z_axis[2]]])
+    pose_quaternion = Quaternion(matrix=rotation_matrix)
+    return pose_quaternion
+
+
+def trajectory_params2poses(_poi, waypoints_params):
+    scanning_poses = []
+    n_xy = (_poi.x ** 2 + _poi.y ** 2) ** 0.5
+    cos_t = _poi.x / n_xy
+    sin_t = _poi.y / n_xy
+    # print(cos_t, sin_t)
+    T_bo = np.zeros((4, 4))
+    T_bo[0, 0] = cos_t
+    T_bo[0, 1] = -sin_t
+    T_bo[0, 3] = _poi.x
+    T_bo[1, 0] = sin_t
+    T_bo[1, 1] = cos_t
+    T_bo[1, 3] = _poi.y
+    T_bo[2, 2] = 1
+    T_bo[2, 3] = _poi.z
+    T_bo[3, 3] = 1
+    # print(T_bo)
+    for i in range(waypoints_params.shape[0]):
+        p_ix = np.cos(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
+        p_iy = np.sin(waypoints_params[i, 0]) * np.sin(waypoints_params[i, 1]) * waypoints_params[i, 2]
+        p_iz = np.cos(waypoints_params[i, 1]) * waypoints_params[i, 2]
+        n_pi = (p_ix ** 2 + p_iy ** 2 + p_iz ** 2) ** 0.5
+        vz_i = - np.array([p_ix, p_iy, p_iz]) / n_pi
+
+        vx_i = np.array([0.0, 1.0, 0.0])
+        if vz_i[0] != 0.0 or vz_i[1] != 0.0:
+            n_xxy = (vz_i[0] ** 2 + vz_i[1] ** 2) ** 0.5
+            vx_i[0] = - vz_i[1] / n_xxy
+            vx_i[1] = vz_i[0] / n_xxy
+            vx_i[2] = 0.0
+
+        vy_i = np.cross(vz_i, vx_i)
+        T_oi = np.zeros((4, 4))
+        T_oi[:3, 0] = vx_i
+        T_oi[:3, 1] = vy_i
+        T_oi[:3, 2] = vz_i
+        T_oi[0, 3] = p_ix
+        T_oi[1, 3] = p_iy
+        T_oi[2, 3] = p_iz
+        T_oi[3, 3] = 1.0
+        T_bi = np.matmul(T_bo, T_oi)
+        # print('[][][][][][]')
+        # print(T_oi)
+        # print(T_bi)
+        pose_i = ros_pose_from_trans_matrix(T_bi)
+        scanning_poses.append(pose_i)
+    return scanning_poses
+
+
 def test_view_params(poi_, view_params, robot_control, saved_view_poses, color_image, depth_image,
                      color_name, depth_name, robot_velocity_scale=0.8, robot_pose_tolerance=(0.05, 0.1)):
 
