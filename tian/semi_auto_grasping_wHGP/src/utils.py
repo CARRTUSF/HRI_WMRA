@@ -25,6 +25,18 @@ def ros_pose_from_trans_matrix(_trans_matrix):
     return pose
 
 
+def trans_matrix_from_7d_pose(x, y, z, wx, wy, wz, w):
+    q_ = Quaternion(w, wx, wy, wz)
+    t__ = np.zeros((4, 4), dtype=np.float64)
+    t__[0, 3] = x
+    t__[1, 3] = y
+    t__[2, 3] = z
+    t__[3, 3] = 1
+    r__ = q_.rotation_matrix
+    t__[:3, :3] = r__
+    return t__
+
+
 def view_param2cart_pose(_poi, view_params):
     n_xy = (_poi.x ** 2 + _poi.y ** 2) ** 0.5
     cos_t = _poi.x / n_xy
@@ -157,6 +169,24 @@ def test_view_params(poi_, view_params, robot_control, saved_view_poses, color_i
                 return False, saved_view_poses
     else:
         return False, saved_view_poses
+    
+
+def pose_propagation_7d(pose_1in2, pose_2in3):
+    # pose(x, y, z, wx, wy, wz, w)
+    pose_1in2_p_q = Quaternion(0.0, pose_1in2[0], pose_1in2[1], pose_1in2[2])
+    pose_1in2_q = Quaternion(pose_1in2[6], pose_1in2[3], pose_1in2[4], pose_1in2[5])    # w, wx, wy, wz
+    
+    pose_2in3_p_q = Quaternion(0.0, pose_2in3[0], pose_2in3[1], pose_2in3[2])
+    pose_2in3_q = Quaternion(pose_2in3[6], pose_2in3[3], pose_2in3[4], pose_2in3[5])    # w, wx, wy, wz
+
+    pose_1in3_q = pose_2in3_q * pose_1in2_q
+    pose_1in2_in3_p_q = pose_2in3_q * pose_1in2_p_q * pose_2in3_q.conjugate
+    pose_1in3_p_q = pose_1in2_in3_p_q + pose_2in3_p_q
+    pose_1in3 = [pose_1in3_p_q.x, pose_1in3_p_q.y, pose_1in3_p_q.z,
+                 pose_1in3_q.x, pose_1in3_q.y, pose_1in3_q.z, pose_1in3_q.w]
+    return pose_1in3
+
+
 # if __name__ == '__main__':
 #     wps = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
 #     print(add_more_waypoints(wps, 3))

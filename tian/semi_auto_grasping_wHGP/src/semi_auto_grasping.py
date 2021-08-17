@@ -403,6 +403,7 @@ def main():
                                                                    hand_cam_color, hand_cam_depth,
                                                                    '4.png', '4_.png',
                                                                    robot_pose_tolerance=(0.01, 0.04))
+            np.savetxt('view_poses.txt', saved_view_poses, fmt='%1.4f')
             if view_pose_reached:
                 rospy.loginfo('Scanning phase complete.')
                 rospy.loginfo('Waiting for object silhouette extraction and initial grasp pose detection...')

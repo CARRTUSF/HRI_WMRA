@@ -3,15 +3,15 @@ from pyquaternion import Quaternion
 
 
 def trans_matrix_from_7d_pose(x, y, z, wx, wy, wz, w):
-    q = Quaternion(w, wx, wy, wz)
-    T = np.zeros((4, 4), dtype=np.float64)
-    T[0, 3] = x
-    T[1, 3] = y
-    T[2, 3] = z
-    T[3, 3] = 1
-    R = q.rotation_matrix
-    T[:3, :3] = R
-    return T
+    q_ = Quaternion(w, wx, wy, wz)
+    t__ = np.zeros((4, 4), dtype=np.float64)
+    t__[0, 3] = x
+    t__[1, 3] = y
+    t__[2, 3] = z
+    t__[3, 3] = 1
+    r__ = q_.rotation_matrix
+    t__[:3, :3] = r__
+    return t__
 
 
 def cartesian2spherical_coords(x_):
