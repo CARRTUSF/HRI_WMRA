@@ -3,6 +3,7 @@ import geometry_msgs.msg
 import numpy as np
 from cv2 import cv2
 from pyquaternion import Quaternion
+from tt_grasp_evaluation import get_point_type
 
 
 def cartesian2spherical_coords(x_):
@@ -185,6 +186,31 @@ def pose_propagation_7d(pose_1in2, pose_2in3):
     pose_1in3 = [pose_1in3_p_q.x, pose_1in3_p_q.y, pose_1in3_p_q.z,
                  pose_1in3_q.x, pose_1in3_q.y, pose_1in3_q.z, pose_1in3_q.w]
     return pose_1in3
+
+
+def expand_and_erode_rgb(image, points, roi, window_size, _erode=True):
+    d = window_size // 2
+    patch = np.ones((window_size, window_size, 3), dtype=np.uint8) * 255
+    # expand
+    for point in points:
+        image[point[0] - d:point[0] + d + 1, point[1] - d:point[1] + d + 1, :] = patch
+        image[point[0], point[1], :] = [0, 0, 255]
+    # erode
+    if _erode:
+        for ei in range(d):
+            roi_d = d - ei
+            erode_points = []
+            print(roi[0] - roi_d, roi[1] + roi_d + 1)
+            print(roi[2] - roi_d, roi[3] + roi_d + 1)
+            mask = image[:, :, 2] // 255
+            for row in range(roi[0] - roi_d, roi[1] + roi_d + 1):
+                for col in range(roi[2] - roi_d, roi[3] + roi_d + 1):
+                    print(row, col)
+                    if get_point_type([row, col], mask) == 2:
+                        erode_points.append([row, col])
+            if erode_points:
+                for pt in erode_points:
+                    image[pt[0], pt[1], :] = [0, 0, 0]
 
 
 # if __name__ == '__main__':

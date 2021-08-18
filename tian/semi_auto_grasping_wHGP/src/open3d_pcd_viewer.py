@@ -2,8 +2,8 @@ import open3d as o3d
 import numpy as np
 
 
-pcd = o3d.io.read_point_cloud('s3.pcd')
-# print(pcd)
+pcd = o3d.io.read_point_cloud('registered_scene_points.pcd')
+print(pcd)
 # # print(np.asarray(pcd.points))
 # ds = np.linspace(-0.5, 0.5, 11)
 # mx, my = np.meshgrid(ds, ds)

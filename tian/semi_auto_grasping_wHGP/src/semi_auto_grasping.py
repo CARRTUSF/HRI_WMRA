@@ -6,6 +6,7 @@ import numpy as np
 from pyquaternion import Quaternion
 from kortex_driver.msg import *
 import geometry_msgs.msg
+from open3d import open3d as o3d
 from sensor_msgs.msg import Image
 from std_msgs.msg import Empty as std_Empty
 # from sensor_msgs.msg import PointCloud2, PointField
@@ -14,7 +15,7 @@ from utils import view_param2cart_pose, cartesian2spherical_coords, test_view_pa
 from tt_move_gen3 import MoveMyGen3, jacobian_spherical2cartesian
 import pygame
 from tt_pygame_util import user_input_confirm_or_cancel_gui
-
+from scipy.spatial import KDTree
 # os.environ["ROS_NAMESPACE"] = "/my_gen3/"
 bridge = CvBridge()
 # xyz = np.empty((0, 3))
@@ -119,12 +120,20 @@ def main():
     # --------------------------- add collision boxes to the planning scene -----------------------
     if success:
         rospy.loginfo('ROS node for Kinova gen3 arm with MoveIt initialization complete.')
+        # -------------------------- read in scene point cloud ---------------------------
+        cl_bbx_positions = np.loadtxt('bbx_positions.txt')
+        cl_bbx_sizes = np.loadtxt('bbx_sizes.txt')
+        for i in range(cl_bbx_positions.shape[0]):
+            cb_name = 'cluster_' + str(i)
+            move_gen3.add_collision_box(cb_name, cl_bbx_sizes[i], cl_bbx_positions[i])
+        cl_bbx_kdtree = KDTree(cl_bbx_positions)
+
         move_gen3.add_collision_box('base_table', None, None)
         move_gen3.add_collision_box('back_block', (0.1, 2, 1), (-0.25, 0.0, 0.5))
         move_gen3.reach_named_position('home', 1)
         # ------------------------ local scene scanning -----------------------
-        current_dir = os.getcwd()
-        views_save_dir = os.path.join(current_dir, 'saved_views')
+        # current_dir = os.getcwd()
+        # views_save_dir = os.path.join(current_dir, 'saved_views')
         rospy.loginfo('Semi autonomous grasping system ready for action.')
         # ---------- stage 1 move close to the object of interest ----------
         stage1_complete = False
@@ -184,6 +193,16 @@ def main():
                 poi_in_cam_in_rob = cam_in_robot_pose_r_q * poi_in_cam_q * cam_in_rob_pose_r_q_conj
                 poi_in_rob = cam_in_robot_pose_p_q + poi_in_cam_in_rob
                 print('Clicked point 3D location relative to robot: ', (poi_in_rob.x, poi_in_rob.y, poi_in_rob.z))
+                # --------------- find closest cluster ---------------------
+                dist, ind = cl_bbx_kdtree.query([poi_in_rob.x, poi_in_rob.y, poi_in_rob.z])
+                print('Selected cluster index: ', ind, 'with distance: ', dist)
+                refined_selection = cl_bbx_kdtree.data[ind]
+                cl_file = 'cluster' + str(ind) + '.pcd'
+                cl_points = o3d.io.read_point_cloud(cl_file)
+                o3d.visualization.draw_geometries([cl_points], window_name='User selected object point cloud')
+                poi_in_rob.x = refined_selection[0]
+                poi_in_rob.y = refined_selection[1]
+                poi_in_rob.z = refined_selection[2]
                 # ----- go to default initial pre-grasp pose -----
                 default_pose_params = [[np.pi, 0.0, pre_d],
                                        [np.pi, np.pi / 2, pre_d],
@@ -232,7 +251,7 @@ def main():
             rate.sleep()
         # !----!!!!!--- --------------------------------------------!!!!!----!
         # ---------- stage 2 close up scan ----------
-        rospy.loginfo('stage 2 - Grasp direction adjustment and local scene scanning')
+        rospy.loginfo('stage 2 - Grasp direction adjustment')
         # ------------- robot velocity control parameters
         # print(poi_in_rob)
         x0 = poi_in_rob.x
@@ -326,87 +345,90 @@ def main():
             rate.sleep()
 
         if stage2_complete:
-            rospy.loginfo('Stage 3 - Local object scanning for object silhouette extractioin '
-                          'and neural network grasp detection')
-            # get current robot pose parameters
-            current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
-            rospy.loginfo('Current robot position in object spherical coordinate system:')
-            print(current_spherical_coords)
-            pre_grasp_pose_params = np.copy(current_spherical_coords)
-            # 1. Find scanning view poses
-            # left-most view
-            d_phi_left = [-1.047, -0.523]  # 60 , 30
-            if pre_grasp_pose_params[1] < 0.8:  # 45
-                thetas = [1.134, 0.96]
-            else:
-                thetas = [pre_grasp_pose_params[1]]
+            rospy.loginfo('Stage 3 - Object silhouette extractioin and neural network grasp detection')
+            # 1. Transform object point cloud to hand camera coordinate frame
+            # 2. Extract object silhouette based on grasp depth
+            # 3. Grasp detection using object silhouette
 
-            rospy.loginfo('-----------view pose determination-----------')
-            print(pre_grasp_pose_params)
-            print(thetas)
-            saved_view_poses = []
-            rospy.loginfo('left side:')
-            view_pose_reached = False
-            for theta_i in thetas:
-                if view_pose_reached:
-                    break
-                for d_phi in d_phi_left:
-                    view_params = [pre_grasp_pose_params[0] + d_phi, theta_i, pre_d]
-                    print(view_params)
-                    view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
-                                                                           saved_view_poses,
-                                                                           hand_cam_color, hand_cam_depth,
-                                                                           '1.png', '1_.png')
-                    if view_pose_reached:
-                        break
-
-            # middle view
-            # right-most view
-            rospy.loginfo('right side:')
-            d_phi_right = [1.047, 0.523]  # 60 , 30
-            view_pose_reached = False
-            for theta_i in thetas:
-                if view_pose_reached:
-                    break
-                for d_phi in d_phi_right:
-                    view_params = [pre_grasp_pose_params[0] + d_phi, theta_i, pre_d]
-                    print(view_params)
-                    view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
-                                                                           saved_view_poses,
-                                                                           hand_cam_color, hand_cam_depth,
-                                                                           '2.png', '2_.png')
-                    if view_pose_reached:
-                        break
-            # top view
-            rospy.loginfo('top side:')
-            # check if pre-grasp pose is close to top scan view pose
-            if pre_grasp_pose_params[1] > 0.174:
-                up_theta = 0.0
-            else:
-                up_theta = pre_grasp_pose_params[1]
-                print('pre-grasp pose close to top view pose')
-            while up_theta < pre_grasp_pose_params[1]:
-                view_params = [pre_grasp_pose_params[0], up_theta, pre_d]
-                print(view_params)
-                view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
-                                                                       saved_view_poses,
-                                                                       hand_cam_color, hand_cam_depth,
-                                                                       '3.png', '3_.png')
-                if view_pose_reached:
-                    break
-                else:
-                    up_theta += 0.174
-
-            rospy.loginfo('back to pre-grasp view')
-            view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, pre_grasp_pose_params, move_gen3,
-                                                                   saved_view_poses,
-                                                                   hand_cam_color, hand_cam_depth,
-                                                                   '4.png', '4_.png',
-                                                                   robot_pose_tolerance=(0.01, 0.04))
-            np.savetxt('view_poses.txt', saved_view_poses, fmt='%1.4f')
-            if view_pose_reached:
-                rospy.loginfo('Scanning phase complete.')
-                rospy.loginfo('Waiting for object silhouette extraction and initial grasp pose detection...')
+            # # get current robot pose parameters
+            # current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
+            # rospy.loginfo('Current robot position in object spherical coordinate system:')
+            # print(current_spherical_coords)
+            # pre_grasp_pose_params = np.copy(current_spherical_coords)
+            # # 1. Find scanning view poses
+            # # left-most view
+            # d_phi_left = [-1.047, -0.523]  # 60 , 30
+            # if pre_grasp_pose_params[1] < 0.8:  # 45
+            #     thetas = [1.134, 0.96]
+            # else:
+            #     thetas = [pre_grasp_pose_params[1]]
+            #
+            # rospy.loginfo('-----------view pose determination-----------')
+            # print(pre_grasp_pose_params)
+            # print(thetas)
+            # saved_view_poses = []
+            # rospy.loginfo('left side:')
+            # view_pose_reached = False
+            # for theta_i in thetas:
+            #     if view_pose_reached:
+            #         break
+            #     for d_phi in d_phi_left:
+            #         view_params = [pre_grasp_pose_params[0] + d_phi, theta_i, pre_d]
+            #         print(view_params)
+            #         view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
+            #                                                                saved_view_poses,
+            #                                                                hand_cam_color, hand_cam_depth,
+            #                                                                '1.png', '1_.png')
+            #         if view_pose_reached:
+            #             break
+            #
+            # # middle view
+            # # right-most view
+            # rospy.loginfo('right side:')
+            # d_phi_right = [1.047, 0.523]  # 60 , 30
+            # view_pose_reached = False
+            # for theta_i in thetas:
+            #     if view_pose_reached:
+            #         break
+            #     for d_phi in d_phi_right:
+            #         view_params = [pre_grasp_pose_params[0] + d_phi, theta_i, pre_d]
+            #         print(view_params)
+            #         view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
+            #                                                                saved_view_poses,
+            #                                                                hand_cam_color, hand_cam_depth,
+            #                                                                '2.png', '2_.png')
+            #         if view_pose_reached:
+            #             break
+            # # top view
+            # rospy.loginfo('top side:')
+            # # check if pre-grasp pose is close to top scan view pose
+            # if pre_grasp_pose_params[1] > 0.174:
+            #     up_theta = 0.0
+            # else:
+            #     up_theta = pre_grasp_pose_params[1]
+            #     print('pre-grasp pose close to top view pose')
+            # while up_theta < pre_grasp_pose_params[1]:
+            #     view_params = [pre_grasp_pose_params[0], up_theta, pre_d]
+            #     print(view_params)
+            #     view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, view_params, move_gen3,
+            #                                                            saved_view_poses,
+            #                                                            hand_cam_color, hand_cam_depth,
+            #                                                            '3.png', '3_.png')
+            #     if view_pose_reached:
+            #         break
+            #     else:
+            #         up_theta += 0.174
+            #
+            # rospy.loginfo('back to pre-grasp view')
+            # view_pose_reached, saved_view_poses = test_view_params(poi_in_rob, pre_grasp_pose_params, move_gen3,
+            #                                                        saved_view_poses,
+            #                                                        hand_cam_color, hand_cam_depth,
+            #                                                        '4.png', '4_.png',
+            #                                                        robot_pose_tolerance=(0.01, 0.04))
+            # np.savetxt('view_poses.txt', saved_view_poses, fmt='%1.4f')
+            # if view_pose_reached:
+            #     rospy.loginfo('Scanning phase complete.')
+            #     rospy.loginfo('Waiting for object silhouette extraction and initial grasp pose detection...')
 
             # 3. Object point cloud registration and silhouette extraction (another script)
             # 4. Neural network grasp detection (another script)
