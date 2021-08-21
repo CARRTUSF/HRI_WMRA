@@ -1,6 +1,6 @@
 import numpy as np
 from pyquaternion import Quaternion
-
+from tt_grasp_evaluation import get_point_type
 
 def trans_matrix_from_7d_pose(x, y, z, wx, wy, wz, w):
     q_ = Quaternion(w, wx, wy, wz)
@@ -89,6 +89,88 @@ def jacobian_spherical2cartesian(_alpha_, _phi_, _theta_, _r, angle_representati
     jacobian__[4, 1] = sin_a * sin_p - cos_a * cos_p
     jacobian__[5, 0] = 1
     return jacobian__
+
+
+def tt_vector_division(v1, v2, n):
+    v1 = np.asarray(v1, dtype=np.float)
+    v2 = np.asarray(v2, dtype=np.float)
+    v1_norm = 0
+    v2_norm = 0
+    for i in range(n):
+        v1_norm += v1[i]**2
+        v2_norm += v2[i]**2
+    v1_norm = v1_norm ** 0.5
+    v2_norm = v2_norm ** 0.5
+    uv1 = v1 / v1_norm
+    uv2 = v2 / v2_norm
+    k = 1
+    for i in range(n):
+        if uv2[i] != uv1[i]:
+            k = -1
+    v_result = k * v1_norm / v2_norm
+    return v_result
+
+
+def expand_and_erode_rgb(image, points, roi, window_size, _erode=True):
+    d = window_size // 2
+    patch = np.ones((window_size, window_size, 3), dtype=np.uint8) * 255
+    # expand
+    for point in points:
+        image[point[0] - d:point[0] + d + 1, point[1] - d:point[1] + d + 1, :] = patch
+        image[point[0], point[1], :] = [0, 0, 255]
+    # erode
+    if _erode:
+        for ei in range(d):
+            roi_d = d - ei
+            erode_points = []
+            print(roi[0] - roi_d, roi[1] + roi_d + 1)
+            print(roi[2] - roi_d, roi[3] + roi_d + 1)
+            mask = image[:, :, 2] // 255
+            for row in range(roi[0] - roi_d, roi[1] + roi_d + 1):
+                for col in range(roi[2] - roi_d, roi[3] + roi_d + 1):
+                    print(row, col)
+                    if get_point_type([row, col], mask) == 2:
+                        erode_points.append([row, col])
+            if erode_points:
+                for pt in erode_points:
+                    image[pt[0], pt[1], :] = [0, 0, 0]
+
+
+def point_in_triangle(p_, a_, b_, c_):
+    p_ = np.asarray(p_)
+    a_ = np.asarray(a_)
+    b_ = np.asarray(b_)
+    c_ = np.asarray(c_)
+    pa_ = p_ - a_
+    ba_ = b_ - a_
+    ca_ = c_ - a_
+    _s = ba_[1] * ca_[0] - ba_[0] * ca_[1]
+    if abs(_s) > 10e-9:
+        w1 = (pa_[1] * ca_[0] - pa_[0] * ca_[1]) / _s
+        if abs(ca_[0]) > 10e-9:
+            w2 = (pa_[0] - w1 * ba_[0]) / ca_[0]
+        else:
+            w2 = (pa_[1] - w1 * ba_[1]) / ca_[1]
+        s = 1 - w1 - w2
+        if w1 >= 0 and w2 >= 0 and s >= 0:
+            return True
+        else:
+            return False
+    else:  # a, b, c co-linear, check if p is on the same line with a, b, c
+        print('3 points co-linear.', p_, a_, b_, c_)
+        r = tt_vector_division(ba_, ca_, 2)
+        print(r)
+        if 0 < r < 1:  # check p is in line with ca
+            t = tt_vector_division(pa_, ca_, 2)
+        elif r > 1:  # check if p is in line with ba
+            t = tt_vector_division(pa_, ba_, 2)
+        else:  # b, c are on different side of a, check if p is in line with bc
+            t = tt_vector_division((p_ - c_), (b_ - c_), 2)
+        print(t)
+        if 0 < t < 1:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from open3d import open3d as o3d
 import numpy as np
 from utils import trans_matrix_from_7d_pose
-from tt_pointcloud_utils import point_cloud_cropping, tt_cloud_clustering, tt_cloud_plane_removal, \
+from tt_pointcloud_utils import tt_crop_point_cloud, tt_cloud_clustering, tt_cloud_plane_removal, \
     display_inlier_outlier, tt_get_cluster_bb_params
 
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         cloud = cloud.voxel_down_sample(
             voxel_size=voxel_size)
         print(cloud)
-        pcd_bk_removed = point_cloud_cropping([-0.5, 0.5], [-0.5, 0.5], [0, 0.6], cloud)
+        pcd_bk_removed = tt_crop_point_cloud([-0.5, 0.5], [-0.5, 0.5], [0, 0.6], cloud)
         pcd_bk_removed.estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
 

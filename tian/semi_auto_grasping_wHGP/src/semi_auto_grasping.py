@@ -1,25 +1,25 @@
-import os
 from cv2 import cv2
 import rospy
 import pyrealsense2 as realsense
 import numpy as np
 from pyquaternion import Quaternion
 from kortex_driver.msg import *
-import geometry_msgs.msg
 from open3d import open3d as o3d
 from sensor_msgs.msg import Image
 from std_msgs.msg import Empty as std_Empty
-# from sensor_msgs.msg import PointCloud2, PointField
 from cv_bridge import CvBridge
-from utils import view_param2cart_pose, cartesian2spherical_coords, test_view_params
+from utils import spherical_params2cart_poses, cartesian2spherical_coords, trans_matrix_from_7d_pose, \
+    transformation_matrix_inverse
 from tt_move_gen3 import MoveMyGen3, jacobian_spherical2cartesian
 import pygame
 from tt_pygame_util import user_input_confirm_or_cancel_gui
-from scipy.spatial import KDTree
-# os.environ["ROS_NAMESPACE"] = "/my_gen3/"
+from scipy.spatial import KDTree, ConvexHull
+from tt_grasp_evaluation import evaluate_grasp
+from grasp_refinement import plot_grasp_path
+from tt_silhouette_extraction import tt_obj_pointcloud2silhouette
+
+
 bridge = CvBridge()
-# xyz = np.empty((0, 3))
-# rgb = np.empty((0, 3))
 hand_cam_color = np.zeros((100, 100))
 hand_cam_depth = np.zeros((100, 100))
 
@@ -41,27 +41,6 @@ def depth_callback(depth_msg):
     hand_cam_depth = bridge.imgmsg_to_cv2(depth_msg)
 
 
-# def pc2_callback(ros_pc2_msg):
-#     global xyz, rgb
-#     cloud_arr = ros_numpy.point_cloud2.pointcloud2_to_array(ros_pc2_msg)
-#     rgb_arr = cloud_arr['rgb']
-#     rgb_arr.dtype = np.uint32
-#     r = np.asarray((rgb_arr >> 16) & 255, dtype=np.float64)/255
-#     g = np.asarray((rgb_arr >> 8) & 255, dtype=np.float64)/255
-#     b = np.asarray(rgb_arr & 255, dtype=np.float64)/255
-#     rgb = np.stack((r, g, b), axis=2).reshape((-1, 3))
-#     xyz = np.stack((cloud_arr['x'], cloud_arr['y'], cloud_arr['z']), axis=2).reshape((-1, 3))
-
-
-# def save_point_cloud_to_file(file_name, pc_xyz, pc_rgb):
-#     pcd = o3d.geometry.PointCloud()
-#     pcd.points = o3d.utility.Vector3dVector(pc_xyz)
-#     pcd.colors = o3d.utility.Vector3dVector(pc_rgb)
-#     o3d.io.write_point_cloud(file_name, pcd)
-#     print('number of points: ', pc_xyz.shape, pc_rgb.shape)
-#     print('point cloud data saved to: ', file_name)
-
-
 def main():
     # ----------------------------------ROS stuff ------------------------------------------
     rospy.init_node('TT_semi_auto_grasping', anonymous=True)
@@ -75,10 +54,9 @@ def main():
     global hand_cam_color, hand_cam_depth  # xyz, rgb
     pre_d = 0.25  # in meter
     # ---------------- eye-to-hand camera pose in robot base frame -----------------
-    # (0.703286572, -0.479129947, 0.407774383, Quaternion(0.446737, -0.846885, -0.243772, 0.155097))
     # position as quaternion 0 x y z
-    cam_in_robot_pose_p_q = Quaternion(0.0, 0.703286572, -0.479129947, 0.407774383)
-    cam_in_robot_pose_r_q = Quaternion(0.446737, -0.846885, -0.243772, 0.155097)  # rotation as quaternion w x y z
+    cam_in_robot_pose_p_q = Quaternion(0.0, -0.5181, 0.57632, 0.4790758)
+    cam_in_robot_pose_r_q = Quaternion(-0.2774, 0.409882, -0.761352, 0.419668)  # rotation as quaternion w x y z
     # ----------------------------- realsense camera initialization ---------------------------
     rospy.loginfo('--------Initializing realsense L515 camera---------')
     rs_pipe = realsense.pipeline()  # camera pipeline object
@@ -127,17 +105,18 @@ def main():
             cb_name = 'cluster_' + str(i)
             move_gen3.add_collision_box(cb_name, cl_bbx_sizes[i], cl_bbx_positions[i])
         cl_bbx_kdtree = KDTree(cl_bbx_positions)
-
+        # ---------------------------------------------------------------------
         move_gen3.add_collision_box('base_table', None, None)
         move_gen3.add_collision_box('back_block', (0.1, 2, 1), (-0.25, 0.0, 0.5))
-        move_gen3.reach_named_position('home', 1)
-        # ------------------------ local scene scanning -----------------------
+        # move_gen3.reach_named_position('home', 1)
+        # ---------------------------------------------------------------------
         # current_dir = os.getcwd()
         # views_save_dir = os.path.join(current_dir, 'saved_views')
         rospy.loginfo('Semi autonomous grasping system ready for action.')
         # ---------- stage 1 move close to the object of interest ----------
         stage1_complete = False
         poi_in_rob = None
+        object_pcd = None
         rospy.loginfo('stage 1 - select object for grasping')
         iter_counter = 0
         while not (stage1_complete or rospy.is_shutdown()):  # loop 1
@@ -173,10 +152,11 @@ def main():
                         mx, my = pygame.mouse.get_pos()
                         print('Mouse clicked at: ', mx, my)
                         pygame.draw.circle(screen, (255, 0, 0), (mx, my), 4)
-                        user_confirmed = user_input_confirm_or_cancel_gui(screen, button_w, button_h,
-                                                                          mx, my, dy, button_gap)
-                        if user_confirmed:
-                            user_selected_point = (mx, my)
+                        # user_confirmed = user_input_confirm_or_cancel_gui(screen, button_w, button_h,
+                        #                                                   mx, my, dy, button_gap)
+                        # if user_confirmed:
+                        #     user_selected_point = (mx, my)
+                        user_selected_point = (mx, my)
 
             # ----- user select object -----
             if user_selected_point != (-1, -1):
@@ -198,11 +178,11 @@ def main():
                 print('Selected cluster index: ', ind, 'with distance: ', dist)
                 refined_selection = cl_bbx_kdtree.data[ind]
                 cl_file = 'cluster' + str(ind) + '.pcd'
-                cl_points = o3d.io.read_point_cloud(cl_file)
-                o3d.visualization.draw_geometries([cl_points], window_name='User selected object point cloud')
+                object_pcd = o3d.io.read_point_cloud(cl_file)
+                # o3d.visualization.draw_geometries([object_pcd], window_name='User selected object point cloud')
                 poi_in_rob.x = refined_selection[0]
                 poi_in_rob.y = refined_selection[1]
-                poi_in_rob.z = refined_selection[2]
+                # poi_in_rob.z = refined_selection[2]
                 # ----- go to default initial pre-grasp pose -----
                 default_pose_params = [[np.pi, 0.0, pre_d],
                                        [np.pi, np.pi / 2, pre_d],
@@ -221,7 +201,7 @@ def main():
                     pygame.display.update()
                     # ------------------------------------
                     # print('Testing default pre-grasp pose reachability: ', count, pose_param)
-                    default_pose = view_param2cart_pose(poi_in_rob, pose_param)
+                    default_pose = spherical_params2cart_poses(poi_in_rob, pose_param)
                     reachable, plan = move_gen3.plan_to_cartesian_pose(default_pose, 0.5)
                     if reachable:
                         # ------------------------- GUI update
@@ -344,11 +324,66 @@ def main():
                 twist_command_pub.publish(twist_command)
             rate.sleep()
 
-        if stage2_complete:
-            rospy.loginfo('Stage 3 - Object silhouette extractioin and neural network grasp detection')
-            # 1. Transform object point cloud to hand camera coordinate frame
-            # 2. Extract object silhouette based on grasp depth
-            # 3. Grasp detection using object silhouette
+        if stage2_complete and object_pcd is not None:
+            rospy.loginfo('Stage 3 - Object silhouette extraction and neural network grasp detection')
+            # 1. Transform object point cloud to hand camera coordinate frame --------------------------
+            current_end_effector_pose = move_gen3.arm_group.get_current_pose().pose
+            # transformation matrix of base frame in tool frame
+            T_bt = trans_matrix_from_7d_pose(current_end_effector_pose.position.x,
+                                             current_end_effector_pose.position.y,
+                                             current_end_effector_pose.position.z,
+                                             current_end_effector_pose.orientation.x,
+                                             current_end_effector_pose.orientation.y,
+                                             current_end_effector_pose.orientation.z,
+                                             current_end_effector_pose.orientation.w,)
+            T_tb = transformation_matrix_inverse(T_bt)
+            # object point cloud in tool frame
+            object_pcd.transform(T_tb)
+            # 2. Extract object silhouette based on grasp depth --------------------------------------------
+            grasp_depth = 0.22
+            obj_silhouette, obj_bbx = tt_obj_pointcloud2silhouette(object_pcd, grasp_depth,
+                                                                   silhouette_filling_radius=18,
+                                                                   show_cutting_plane=False,
+                                                                   show_grasp_region_cloud=False,
+                                                                   show_results=True,
+                                                                   show_outliers=True,
+                                                                   show_proj_points=True)
+
+            if obj_silhouette is not None:
+                # 3. Grasp detection using object silhouette -------------------------------------
+                grasp_found = False
+                desired_grasp_score = 0.95
+                time_out = 0
+                hw = 180
+                hh = 40
+                init_gx, init_gy = np.int(np.round((np.array(obj_bbx[0]) + np.array(obj_bbx[1])) / 2.0))
+                grasp_rect = []
+                while not grasp_found and time_out < 2000:
+                    gx = np.random.randint(-30, 30) + init_gx
+                    gy = np.random.randint(-30, 30) + init_gy
+                    a = 0
+                    search_show = np.copy(obj_silhouette)
+                    search_show = np.stack([search_show, search_show, search_show], axis=2) * 255
+                    cv2.circle(search_show, (gx, gy), 4, (0, 0, 255), -1)
+                    cv2.imshow('grasp refinement', search_show)
+                    cv2.waitKey(1)
+                    while a < 10:
+                        time_out += 1
+                        a += 1
+                        ang = np.random.randint(-90, 90)
+                        grasp = [gy, gx, ang, hh, hw]
+                        # print grasp
+                        score, features = evaluate_grasp(grasp, obj_silhouette)
+                        print(score)
+                        print(features)
+                        if score > desired_grasp_score:
+                            grasp_found = True
+                            grasp_rect = [gy, gx, ang]
+                            plot_grasp_path([gy, gx], ang, hh, hw, search_show)
+                            cv2.imshow('grasp refinement', search_show)
+                            cv2.waitKey(0)
+                            break
+                # if grasp_rect is not None:
 
             # # get current robot pose parameters
             # current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
