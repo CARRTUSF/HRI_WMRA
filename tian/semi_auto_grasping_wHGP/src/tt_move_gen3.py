@@ -84,7 +84,6 @@ class MoveMyGen3(object):
         return arm_group.go(wait=True)
 
     def reach_gripper_position(self, relative_position):
-        # gripper_group = self.gripper_group
         # We only have to move this joint because all others are mimic!
         gripper_joint = self.robot.get_joint(self.gripper_joint_name)
         gripper_max_absolute_pos = gripper_joint.max_bound()
@@ -129,7 +128,7 @@ class MoveMyGen3(object):
 
     def add_collision_box(self, box_name, box_size, box_position):
         if box_name == "base_table":
-            box_position = [0.4, 0.0, -0.2]
+            box_position = [0.4, 0.0, -0.21]
             box_size = (1, 2, 0.4)
         box_pose = geometry_msgs.msg.PoseStamped()
         box_pose.header.frame_id = "base_link"
@@ -138,6 +137,9 @@ class MoveMyGen3(object):
         box_pose.pose.position.y = box_position[1]
         box_pose.pose.position.z = box_position[2]
         self.scene.add_box(box_name, box_pose, box_size)
+
+    def remove_collision_box(self, box_name):
+        self.scene.remove_world_object(box_name)
 
     def get_current_pose_as_list(self):
         current_pose = self.arm_group.get_current_pose().pose

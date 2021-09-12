@@ -21,7 +21,7 @@ def object_grasp_region_extraction(obj_cloud, _grasp_depth, show_cutting_plane=F
     return tt_crop_point_cloud([-1, 1], [-1, 1], [0, _grasp_depth], obj_cloud)
 
 
-def silhouette_from_point_cloud_projection(pp_image__, pp_pixels__, radius=18):
+def silhouette_from_point_cloud_projection(pp_image__, pp_pixels__, radius=20):
     pp_image = np.copy(pp_image__)
     init_pixels_kdtree = KDTree(pp_pixels__)
     outliers__ = []
@@ -31,7 +31,7 @@ def silhouette_from_point_cloud_projection(pp_image__, pp_pixels__, radius=18):
         for i in inds:
             nearest_neighbors.append(init_pixels_kdtree.data[i])
         nearest_neighbors = np.asarray(nearest_neighbors)
-        if nearest_neighbors.shape[0] >= 10:
+        if nearest_neighbors.shape[0] >= 5:
             neighbor_hull = ConvexHull(nearest_neighbors)
             r_min = np.min(nearest_neighbors[:, 0])
             r_max = np.max(nearest_neighbors[:, 0])
@@ -48,7 +48,7 @@ def silhouette_from_point_cloud_projection(pp_image__, pp_pixels__, radius=18):
     return np.asarray(pp_image, dtype=np.uint8), outliers__
 
 
-def tt_obj_pointcloud2silhouette(obj_cloud__, _grasp_depth, silhouette_filling_radius=18,
+def tt_obj_pointcloud2silhouette(obj_cloud__, _grasp_depth, silhouette_filling_radius=20,
                                  img_w=1280, img_h=720, f_x=920.8743, f_y=921.56549, c_x=644.76465, c_y=343.153,
                                  show_cutting_plane=False, show_grasp_region_cloud=True, show_results=True,
                                  show_outliers=True, show_proj_points=True):
@@ -78,17 +78,19 @@ def tt_obj_pointcloud2silhouette(obj_cloud__, _grasp_depth, silhouette_filling_r
                     cv2.circle(roi_silhouette_show, (outlier[1], outlier[0]), 1, (0, 0, 255), -1)
             if show_proj_points:
                 for pixel in obj_pp_pix_in_roi:
-                    cv2.circle(roi_silhouette_show, (pixel[1], pixel[0]), 1, (0, 255, 0), -1)
+                    cv2.circle(roi_silhouette_show, (pixel[1], pixel[0]), 1, (255, 0, 0), -1)
             cv2.imshow('object silhouette', roi_silhouette_show)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-        return roi_silhouette, [[r_min, c_min], [r_max, c_max]]
+        obj_silhouette_img = np.zeros((img_h, img_w))
+        obj_silhouette_img[r_min:r_max + 1, c_min:c_max + 1] = roi_silhouette
+        return obj_silhouette_img, [[r_min, c_min], [r_max, c_max]]
     else:
         return None, None
 
 
 if __name__ == '__main__':
-    pcd = o3d.io.read_point_cloud('cluster1.pcd')
+    pcd = o3d.io.read_point_cloud('cluster0.pcd')
     T_bc = np.asarray([[1, 0, 0, 0.5],
                        [0, -1, 0, 0],
                        [0, 0, -1, 0.5],
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     T_cb = transformation_matrix_inverse(T_bc)
     pcd.transform(T_cb)
     o3d.visualization.draw_geometries([pcd], 'object point-cloud')
-    grasp_depth = 0.45
+    grasp_depth = 0.5
     obj_silhouette, obj_bbx = tt_obj_pointcloud2silhouette(pcd, grasp_depth, silhouette_filling_radius=18,
                                                            show_cutting_plane=True,
                                                            show_grasp_region_cloud=True,

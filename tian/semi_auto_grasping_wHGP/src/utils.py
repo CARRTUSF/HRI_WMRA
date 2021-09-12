@@ -59,6 +59,7 @@ def get_quaternion_pose_from_xyz_axes(x_axis, y_axis, z_axis):
 
 def spherical_params2cart_poses(poi_, spherical_params):
     cart_poses = []
+    spherical_params = np.asarray(spherical_params).reshape((-1, 3))
     n_xy = (poi_.x ** 2 + poi_.y ** 2) ** 0.5
     cos_t = poi_.x / n_xy
     sin_t = poi_.y / n_xy
@@ -155,7 +156,38 @@ def transformation_matrix_inverse(trans_m):
     return trans_m_inverse
 
 
+def image_grasp_pose2robot_goal_pose(pose_in_image, m_cam_in_robot, z, fx, fy, cx, cy):
+    r, c, theta = pose_in_image
+    c_theta = np.cos(np.deg2rad(theta))
+    s_theta = np.sin(np.deg2rad(theta))
+    m_goal_in_cam = np.array([[c_theta, -s_theta, 0, (cx - c) * z / fx],
+                              [s_theta, c_theta, 0, (cy - r) * z / fy],
+                              [0, 0, 1, z-0.025],
+                              [0, 0, 0, 1]])
+    print(m_cam_in_robot)
+    print(m_goal_in_cam)
+    m_goal_in_robot = np.matmul(m_cam_in_robot, m_goal_in_cam)
+    return ros_pose_from_trans_matrix(m_goal_in_robot)
+
+
+def get_gripper_projection_size(grasp_depth, fx, fy):
+    hh = int(round(fy * 0.011 / grasp_depth))
+    hw = int(round(fx * 0.0425 / grasp_depth))
+    return hh, hw
 # if __name__ == '__main__':
+#     poi = Quaternion(0, 1, 2, 3)
+#     default_pose_params = [[np.pi, 0.0, 2],
+#                            [np.pi, np.pi / 2, 2],
+#                            [1.25 * np.pi, np.pi / 2, 2],
+#                            [0.75 * np.pi, np.pi / 2, 2],
+#                            [np.pi, np.pi / 4, 2],
+#                            [1.25 * np.pi, np.pi / 4, 2],
+#                            [0.75 * np.pi, np.pi / 4, 2]]
+#     poses = spherical_params2cart_poses(poi, default_pose_params)
+#     print(poses)
+#     pose = spherical_params2cart_poses(poi, [np.pi, 0.0, 2])
+#     print('-------')
+#     print(pose)
 # import time
 # T_cb = trans_matrix_from_7d_pose(0.5761, 0.00218, 0.434135, 0.499798, 0.499974, 0.5007974, 0.49943)
 # # T_cb = np.array([[-1, 0, 0, 0.7],

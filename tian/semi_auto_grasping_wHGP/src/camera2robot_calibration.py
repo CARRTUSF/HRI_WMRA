@@ -14,8 +14,8 @@
 
 
 from utils import pose_propagation_7d
-pose_cam_in_mkr = [-0.526, -1.117, 0.495, 0.827, -0.237, 0.120, -0.496]
-pose_mkr_in_rob = [0.602, 0.073, -0.033, 0.018, 0.014, -0.707, 0.707]
+pose_cam_in_mkr = [-0.334, -0.853, 0.492, 0.841, -0.172, 0.131, -0.496]
+pose_mkr_in_rob = [0.592, 0.102, -0.028, 0.010, 0.016, -0.686, 0.727]
 pose_cam_in_rob = pose_propagation_7d(pose_cam_in_mkr, pose_mkr_in_rob)
 print('pose: x, y, z, wx, wy, wz, w')
 print(pose_cam_in_rob)

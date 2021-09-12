@@ -1,3 +1,4 @@
+import copy
 from cv2 import cv2
 import rospy
 import pyrealsense2 as realsense
@@ -9,7 +10,7 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Empty as std_Empty
 from cv_bridge import CvBridge
 from utils import spherical_params2cart_poses, cartesian2spherical_coords, trans_matrix_from_7d_pose, \
-    transformation_matrix_inverse
+    transformation_matrix_inverse, image_grasp_pose2robot_goal_pose, get_gripper_projection_size
 from tt_move_gen3 import MoveMyGen3, jacobian_spherical2cartesian
 import pygame
 from tt_pygame_util import user_input_confirm_or_cancel_gui
@@ -55,8 +56,8 @@ def main():
     pre_d = 0.25  # in meter
     # ---------------- eye-to-hand camera pose in robot base frame -----------------
     # position as quaternion 0 x y z
-    cam_in_robot_pose_p_q = Quaternion(0.0, -0.5181, 0.57632, 0.4790758)
-    cam_in_robot_pose_r_q = Quaternion(-0.2774, 0.409882, -0.761352, 0.419668)  # rotation as quaternion w x y z
+    cam_in_robot_pose_p_q = Quaternion(0.0, -0.2587, 0.3675354357, 0.48207)
+    cam_in_robot_pose_r_q = Quaternion(-0.276384, 0.490551, -0.711216, 0.420317)  # rotation as quaternion w x y z
     # ----------------------------- realsense camera initialization ---------------------------
     rospy.loginfo('--------Initializing realsense L515 camera---------')
     rs_pipe = realsense.pipeline()  # camera pipeline object
@@ -101,6 +102,10 @@ def main():
         # -------------------------- read in scene point cloud ---------------------------
         cl_bbx_positions = np.loadtxt('bbx_positions.txt')
         cl_bbx_sizes = np.loadtxt('bbx_sizes.txt')
+        # scanning error correction
+        cl_bbx_positions[:, 0] += 0.0278
+        cl_bbx_positions[:, 1] -= 0.007265
+        print(cl_bbx_positions)
         for i in range(cl_bbx_positions.shape[0]):
             cb_name = 'cluster_' + str(i)
             move_gen3.add_collision_box(cb_name, cl_bbx_sizes[i], cl_bbx_positions[i])
@@ -109,6 +114,7 @@ def main():
         move_gen3.add_collision_box('base_table', None, None)
         move_gen3.add_collision_box('back_block', (0.1, 2, 1), (-0.25, 0.0, 0.5))
         # move_gen3.reach_named_position('home', 1)
+        move_gen3.reach_gripper_position(0.0)
         # ---------------------------------------------------------------------
         # current_dir = os.getcwd()
         # views_save_dir = os.path.join(current_dir, 'saved_views')
@@ -117,6 +123,7 @@ def main():
         stage1_complete = False
         poi_in_rob = None
         object_pcd = None
+        obj_ind = None
         rospy.loginfo('stage 1 - select object for grasping')
         iter_counter = 0
         while not (stage1_complete or rospy.is_shutdown()):  # loop 1
@@ -174,10 +181,10 @@ def main():
                 poi_in_rob = cam_in_robot_pose_p_q + poi_in_cam_in_rob
                 print('Clicked point 3D location relative to robot: ', (poi_in_rob.x, poi_in_rob.y, poi_in_rob.z))
                 # --------------- find closest cluster ---------------------
-                dist, ind = cl_bbx_kdtree.query([poi_in_rob.x, poi_in_rob.y, poi_in_rob.z])
-                print('Selected cluster index: ', ind, 'with distance: ', dist)
-                refined_selection = cl_bbx_kdtree.data[ind]
-                cl_file = 'cluster' + str(ind) + '.pcd'
+                dist, obj_ind = cl_bbx_kdtree.query([poi_in_rob.x, poi_in_rob.y, poi_in_rob.z])
+                print('Selected cluster index: ', obj_ind, 'with distance: ', dist)
+                refined_selection = cl_bbx_kdtree.data[obj_ind]
+                cl_file = 'cluster' + str(obj_ind) + '.pcd'
                 object_pcd = o3d.io.read_point_cloud(cl_file)
                 # o3d.visualization.draw_geometries([object_pcd], window_name='User selected object point cloud')
                 poi_in_rob.x = refined_selection[0]
@@ -202,7 +209,7 @@ def main():
                     # ------------------------------------
                     # print('Testing default pre-grasp pose reachability: ', count, pose_param)
                     default_pose = spherical_params2cart_poses(poi_in_rob, pose_param)
-                    reachable, plan = move_gen3.plan_to_cartesian_pose(default_pose, 0.5)
+                    reachable, plan = move_gen3.plan_to_cartesian_pose(default_pose, 0.5, tolerance=(0.006, 0.02))
                     if reachable:
                         # ------------------------- GUI update
                         screen.blit(scene_img, (0, 0))
@@ -338,11 +345,31 @@ def main():
                                              current_end_effector_pose.orientation.w,)
             T_tb = transformation_matrix_inverse(T_bt)
             # object point cloud in tool frame
+            pcd_position_error_matrix = np.zeros((4, 4), dtype=np.float64)
+            pcd_position_error_matrix[0, 3] = 0.0278
+            pcd_position_error_matrix[1, 3] = -0.007265
+            pcd_position_error_matrix[0, 0] = 1.0
+            pcd_position_error_matrix[1, 1] = 1.0
+            pcd_position_error_matrix[2, 2] = 1.0
+            pcd_position_error_matrix[3, 3] = 1.0
+            object_pcd.transform(pcd_position_error_matrix)
             object_pcd.transform(T_tb)
             # 2. Extract object silhouette based on grasp depth --------------------------------------------
             grasp_depth = 0.22
+            imw = 1280
+            imh = 720
+            # fx = 920.8743
+            # fy = 921.56549
+            # cx = 644.76465
+            # cy = 343.153
+            fx = 920
+            fy = 920
+            cx = 640
+            cy = 360
             obj_silhouette, obj_bbx = tt_obj_pointcloud2silhouette(object_pcd, grasp_depth,
-                                                                   silhouette_filling_radius=18,
+                                                                   img_w=imw, img_h=imh,
+                                                                   f_x=fx, f_y=fy, c_x=cx, c_y=cy,
+                                                                   silhouette_filling_radius=25,
                                                                    show_cutting_plane=False,
                                                                    show_grasp_region_cloud=False,
                                                                    show_results=True,
@@ -351,22 +378,24 @@ def main():
 
             if obj_silhouette is not None:
                 # 3. Grasp detection using object silhouette -------------------------------------
+                print(obj_bbx)
                 grasp_found = False
                 desired_grasp_score = 0.95
                 time_out = 0
-                hw = 180
-                hh = 40
-                init_gx, init_gy = np.int(np.round((np.array(obj_bbx[0]) + np.array(obj_bbx[1])) / 2.0))
+                hh, hw = get_gripper_projection_size(grasp_depth, fx, fy)
+                init_gy, init_gx = np.round((np.array(obj_bbx[0]) + np.array(obj_bbx[1])) / 2.0)
                 grasp_rect = []
-                while not grasp_found and time_out < 2000:
-                    gx = np.random.randint(-30, 30) + init_gx
-                    gy = np.random.randint(-30, 30) + init_gy
+                while not grasp_found and time_out < 1000:
+                    gx = np.random.randint(-30, 30) + np.int(init_gx)
+                    gy = np.random.randint(-30, 30) + np.int(init_gy)
                     a = 0
                     search_show = np.copy(obj_silhouette)
                     search_show = np.stack([search_show, search_show, search_show], axis=2) * 255
                     cv2.circle(search_show, (gx, gy), 4, (0, 0, 255), -1)
                     cv2.imshow('grasp refinement', search_show)
-                    cv2.waitKey(1)
+                    key = cv2.waitKey(1) & 0xff
+                    if key == ord('q'):
+                        break
                     while a < 10:
                         time_out += 1
                         a += 1
@@ -380,12 +409,50 @@ def main():
                             grasp_found = True
                             grasp_rect = [gy, gx, ang]
                             plot_grasp_path([gy, gx], ang, hh, hw, search_show)
+                            cv2.circle(search_show, (640, 360), 4, (0, 200, 255), -1)
                             cv2.imshow('grasp refinement', search_show)
                             cv2.waitKey(0)
                             break
-                # if grasp_rect is not None:
 
+                if grasp_rect:
+                    print('grasp rectangle:', grasp_rect)
+                    goal_pose = image_grasp_pose2robot_goal_pose(grasp_rect, T_bt, grasp_depth, fx, fy, cx, cy)
+                    print(goal_pose)
+
+                    obj_name = 'cluster_' + str(obj_ind)
+                    move_gen3.remove_collision_box(obj_name)
+                    move_gen3.remove_collision_box('cluster_4')
+
+                    goal_1_reached = False
+                    goal_1 = copy.deepcopy(goal_pose)
+                    goal_1.position.z = move_gen3.arm_group.get_current_pose().pose.position.z
+
+                    print('Adjusting gripper pre-grasp pose...')
+                    print(goal_1)
+                    reachable, plan = move_gen3.plan_to_cartesian_pose(goal_1, 0.5, tolerance=(0.003, 0.01))
+                    if reachable:
+                        goal_1_reached = move_gen3.execute_trajectory_plan(plan)
+                    if goal_1_reached:
+                        goal_2 = move_gen3.arm_group.get_current_pose().pose
+                        goal_2.position.z = goal_pose.position.z
+                        reachable = False
+                        plan = []
+                        count = 0
+                        while not reachable and count < 6:
+                            print(goal_2)
+                            reachable, plan = move_gen3.plan_to_cartesian_pose(goal_2, 0.5, tolerance=(0.003, 0.01))
+                            goal_2.position.z += 0.005
+                            count += 1
+                        if reachable:
+                            # move_gen3.add_collision_box('cluster_s', [0.0709, 0.0712, 0.0599], [0.4594, 0.0977, 0.0131])
+                            usr_input = raw_input('Execute grasping (y/n)?')
+                            if usr_input == 'y':
+                                move_gen3.execute_trajectory_plan(plan)
+                                move_gen3.reach_gripper_position(0.88)
+                                move_gen3.reach_cartesian_pose(goal_1)
+                        raw_input('Press enter to close program')
             # # get current robot pose parameters
+
             # current_spherical_coords = get_current_spherical_coords(move_gen3, t_0b)
             # rospy.loginfo('Current robot position in object spherical coordinate system:')
             # print(current_spherical_coords)

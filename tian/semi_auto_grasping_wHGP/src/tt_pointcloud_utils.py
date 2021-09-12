@@ -90,8 +90,8 @@ def tt_cloud2binary_image(cloud, img_w, img_h, f_x, f_y, c_x, c_y):
     corresponding_pixels = np.empty((0, 2), dtype=np.int)
     cloud_points = np.asarray(cloud.points)
     for pt in cloud_points:
-        c = int(round(f_x * pt[0] / pt[2] + c_x))
-        r = int(round(f_y * pt[1] / pt[2] + c_y))
+        c = int(round(c_x - f_x * pt[0] / pt[2]))
+        r = int(round(c_y - f_y * pt[1] / pt[2]))
         corresponding_pixels = np.append(corresponding_pixels, [[r, c]], axis=0)
         img[r, c] = 1
     return img, corresponding_pixels
